@@ -1,0 +1,31 @@
+{
+  "name": "TPAD Assist",
+  "manifest_version": 2,
+  "description": "TAPD助手",
+  "version": "0.0.1",
+  "background": {
+    "scripts":[
+      "background.js"
+    ]
+  },
+  "icons":{
+    "16": "image/main_icon_16.png",             
+    "48": "image/main_icon_48.png",
+    "128": "image/main_icon.png"                    
+  },
+   "browser_action": {
+          "default_icon": {
+            "16": "image/main_icon_off_16.png",
+            "24": "image/main_icon_off_48.png",
+            "32": "image/main_icon_off_48.png"
+          },
+          "default_title": "TAPD Assist",
+          "default_popup": "popup.html"
+    },
+  "options_page": "options.html",
+  "permissions": [
+    "tabs",
+    "http://*.tapd.cn/",
+    "https://*.tapd.cn/"
+  ]
+}
