@@ -7,7 +7,3 @@ cd $EXTENSION_DIR/src \
     && zip -r ../src.zip . \
     && cd $CURRENT_DIR
 
-
-if [ "test" -eq "adfasdf" ]; then
-    echo "234234"
-fi
