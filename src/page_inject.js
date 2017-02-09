@@ -1,4 +1,4 @@
-window.onload = function () {
+let patchPage = function () {
   let detectAndReplaceLinkInText = function (node) {
     let text = node.data;
     let splits = text.split(/[ \t\r\n]+/);
@@ -76,6 +76,10 @@ window.onload = function () {
   detectAndReplaceLink(container);
 
 }
+
+window.onload = patchPage;
+
+setTimeout(patchPage, 6 * 1000);
 
 chrome.extension.sendMessage({
   type: 'setTabIcon',
