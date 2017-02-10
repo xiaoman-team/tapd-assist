@@ -1,4 +1,4 @@
-Chrome extension for proxyagent
+Chrome extension for [TAPD](http://www.tapd.cn/)
 ---
 
 ### Extension ID
