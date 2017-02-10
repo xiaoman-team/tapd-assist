@@ -79,6 +79,7 @@ let patchPage = function () {
 
 window.onload = patchPage;
 
+setTimeout(patchPage, 2 * 1000);
 setTimeout(patchPage, 6 * 1000);
 
 chrome.extension.sendMessage({
