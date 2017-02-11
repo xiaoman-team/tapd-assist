@@ -1,5 +1,5 @@
-let patchPage = function () {
-  let detectAndReplaceLinkInText = function (node) {
+let patchPage = function (root) {
+  let replaceLinkInText = function (node) {
     let text = node.data;
     let splits = text.split(/[ \t\r\n]+/);
 
@@ -26,8 +26,8 @@ let patchPage = function () {
       let a = document.createElement('a');
       a.href = split;
       a.textContent = decodeURIComponent(split);
-      if (['https://', 'http://'].indexOf(a.origin)) {
-        a.title = '点击打开协议' + a.origin;
+      if (['https:', 'http:'].indexOf(a.protocol)) {
+        a.title = '点击打开' + a.protocol + '//协议';
       }
       children.push(a);
 
@@ -53,34 +53,44 @@ let patchPage = function () {
 
   let detectAndReplaceLink;
   
-  detectAndReplaceLink = function (root) {
-    let childNodes = root.childNodes;
+  detectAndReplaceLink = function (parent) {
+    let childNodes = parent.childNodes;
     childNodes.forEach(function (node) {
       detectAndReplaceLink(node);
 
-      if (node.nodeName === '#text') {
-        let newNode = detectAndReplaceLinkInText(node);
+      if (parent.nodeName.toLowerCase() !== 'a' && node.nodeName.toLowerCase() === '#text') {
+        let newNode = replaceLinkInText(node);
         if (newNode) {
-          root.insertBefore(newNode, node);
-          root.removeChild(node);
+          parent.insertBefore(newNode, node);
+          parent.removeChild(node);
         }
       }
     });
   };
 
-  let container = $(".description_div.editor-content")[0];
-  if (!container) {
-    console.log('[tapd_assist] .description_div.editor-content not found');
-    return;
-  }
-  detectAndReplaceLink(container);
-
+  detectAndReplaceLink(root);
 }
 
-window.onload = patchPage;
+let bodyDOMObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.target.id === 'General_div' && mutation.addedNodes.length) {
+      let root = document.getElementById('description_div');
+      if (root) {
+        patchPage(root);
+      } else {
+        console.warn('[tapd_assist] #description_div not found');
+      }
+    }
+    // console.log(mutation.type, mutation);
+  });    
+});
 
-setTimeout(patchPage, 2 * 1000);
-setTimeout(patchPage, 6 * 1000);
+bodyDOMObserver.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+// bodyDOMObserver.disconnect();
 
 chrome.extension.sendMessage({
   type: 'setTabIcon',
