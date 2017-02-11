@@ -33,6 +33,7 @@
         "https://*.tapd.cn/*"
       ],
       "css": [
+        "page_inject.css"
       ],
       "js": [
         "jquery.js",
