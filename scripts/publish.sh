@@ -83,6 +83,7 @@ echo "packaging zip..." && \
     publish_extension && \
     echo "published extension" && \
     EXTENSION_VERSION=`get_extension_version` && \
+    echo "current version $EXTENSION_VERSION" && \
     echo "Done"
 
 
