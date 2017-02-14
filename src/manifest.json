@@ -2,7 +2,7 @@
   "name": "TAPD助手",
   "manifest_version": 2,
   "description": "TAPD助手",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "background": {
     "scripts":[
       "background.js"
@@ -33,6 +33,7 @@
         "https://*.tapd.cn/*"
       ],
       "css": [
+        "page_inject.css"
       ],
       "js": [
         "jquery.js",
