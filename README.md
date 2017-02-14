@@ -17,7 +17,5 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 
 * after click `#btn_update_exit`, clean empty `<a>` in editor
 
-* automate the upload process
-  * https://developer.chrome.com/webstore/using_webstore_api
-
-* Token from webpage: 4/LbsUN-AQaNc57xskrl9Rz4jzkSiLz4vAhg7T3WbVy0w
+* automatically download crx
+  * http://chrome-extension-downloader.com/how-does-it-work.php
