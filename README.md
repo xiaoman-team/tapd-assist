@@ -4,7 +4,7 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 ### Extension ID
 
 * Local `pidmbabdfgglodgkakjoegeeeemfkdeg`
-* Store `ifnplghlomamhddgdknfcennkpcjcoke`
+* Store [`ifnplghlomamhddgdknfcennkpcjcoke`](https://chrome.google.com/webstore/detail/tapd助手/ifnplghlomamhddgdknfcennkpcjcoke)
 
 ### Features
 
