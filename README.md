@@ -16,6 +16,3 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * shortcut for `#previous_element` and `#next_element`
 
 * after click `#btn_update_exit`, clean empty `<a>` in editor
-
-* automatically download crx
-  * http://chrome-extension-downloader.com/how-does-it-work.php
