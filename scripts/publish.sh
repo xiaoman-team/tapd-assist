@@ -6,7 +6,11 @@ EXTENSION_ID=ifnplghlomamhddgdknfcennkpcjcoke
 # token got from https://console.developers.google.com/apis/credentials?project=xiaomanassistextension&authuser=1
 CLIENT_ID=941813370135-unca1mt7pch2nje1j8qfpk83344sv8dn.apps.googleusercontent.com
 CLIENT_SECRET=EcKyG5WpHsIQmGx_Tucx8lxL
-REFRESH_TOKEN=1/Lc9krxfpGzQm6yUu2X5UdpPpU_T2qmLXzbMQ9BYrUxmh6eBvExlAECyVPYyycCs4
+
+# generated token
+CLIENT_CODE=4/g6LjtFC1e1277_k_R7MiP-5BtS9xZyhF_-wWWnLR1r0
+REFRESH_TOKEN=1/hES444bpThWSDYZ4qhhVXRyZfVkRTNB3l6foKC1oFGw
+
 
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CHROME_LEASE_VERSION=31.0.1609.0
@@ -19,10 +23,42 @@ get_manifest_version() {
 # CURL_OPTS=
 check_curl_opts() {
     if [ "$CURL_OPTS" = "" ]; then
-        echo '\033[0;31m[Warn]\033[0m \033[1;33mThis script will access google services. You can config CURL_OPTS to fuck GFW\033[0m'
+        echo '\033[0;31m[Warn]\033[0m \033[1;33mthis script will access google services. You can config CURL_OPTS to fuck GFW\033[0m'
         echo '    CURL_OPTS="--proxy=http://localhost:8000/" ./scripts/publish.sh'
         echo ' or CURL_OPTS="--socks5-hostname localhost:2080" ./scripts/publish.sh'
     fi
+}
+
+check_token() {
+    if [ "$REFRESH_TOKEN" = "" ]; then
+        echo '\033[0;31m[Error]\033[0m \033[1;33mREFRESH_TOKEN empty\033[0m'
+        echo 'trying to use CLIENT_CODE to get it...'
+
+        if [ "$CLIENT_CODE" = "" ]; then
+            echo '\033[0;31m[Error]\033[0m \033[1;33mCLIENT_CODE also empty, failed\033[0m'
+            echo "open following link in browser to get CLIENT_CODE and update script:"
+            echo "https://accounts.google.com/o/oauth2/auth?response_type=code&scope=https://www.googleapis.com/auth/chromewebstore&client_id=$CLIENT_ID&redirect_uri=urn:ietf:wg:oauth:2.0:oob"
+            return 1
+        fi
+
+        NEW_REFRESH_TOKEN=`get_refresh_token`
+        if [ "$NEW_REFRESH_TOKEN" = "" ]; then
+            echo '\033[0;31m[Error]\033[0m \033[1;33mfailed to get REFRESH_TOKEN\033[0m'
+            return 1
+        fi
+        echo '\033[1;33mplease update script:\033[0m'
+        echo REFRESH_TOKEN=$NEW_REFRESH_TOKEN
+        return 1
+    fi
+}
+
+get_refresh_token() {
+    curl \
+        $CURL_OPTS \
+        -s \
+        -d "client_id=$CLIENT_ID&client_secret=$CLIENT_SECRET&code=$CLIENT_CODE&grant_type=authorization_code&redirect_uri=urn:ietf:wg:oauth:2.0:oob" \
+        "https://accounts.google.com/o/oauth2/token" | \
+        node $SCRIPTS_DIR/json.js refresh_token
 }
 
 get_access_token() {
@@ -113,6 +149,7 @@ echo "Start" \
     && echo "packaging zip..." \
     && $SCRIPTS_DIR/package.sh \
     && check_curl_opts \
+    && check_token \
     && echo "getting access token..." \
     && ACCESS_TOKEN=`get_access_token` \
     && echo "access token: $ACCESS_TOKEN" \
