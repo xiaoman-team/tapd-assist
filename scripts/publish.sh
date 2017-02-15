@@ -158,17 +158,17 @@ echo "Start" \
     && check_token \
     && echo "getting access token..." \
     && ACCESS_TOKEN=`get_access_token` \
-    && echo "access token: $ACCESS_TOKEN" \
+    && echo "got access token: $ACCESS_TOKEN" \
     && echo "uploading zip..." \
     && upload_extension_zip \
     && echo "uploaded zip" \
-    && echo "publish extension..." \
+    && echo "publishing extension..." \
     && publish_extension \
     && echo "published extension" \
     && EXTENSION_VERSION=`get_extension_version` \
     && echo "current chrome store version $EXTENSION_VERSION" \
     && CRX_DOWNLOAD_URL=`get_crx_download_url` \
-    && echo "download extension $CRX_DOWNLOAD_URL" \
+    && echo "downloading extension $CRX_DOWNLOAD_URL" \
     && download_bin $CRX_DOWNLOAD_URL $CRX_FILENAME \
     && echo "downloaded crx $CRX_FILENAME" \
     && echo "Done"
