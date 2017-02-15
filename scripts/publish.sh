@@ -23,7 +23,7 @@ get_manifest_version() {
 # CURL_OPTS=
 check_curl_opts() {
     if [ "$CURL_OPTS" = "" ]; then
-        echo '\033[0;31m[Warn]\033[0m \033[1;33mthis script will access google services. You can config CURL_OPTS to fuck GFW\033[0m'
+        echo '\033[0;31m[Warn]\033[0m \033[1;33mthis script will access Google services. You can config CURL_OPTS to fuck GFW\033[0m'
         echo '    CURL_OPTS="--proxy=http://localhost:8000/" ./scripts/publish.sh'
         echo ' or CURL_OPTS="--socks5-hostname localhost:2080" ./scripts/publish.sh'
     fi
@@ -148,6 +148,7 @@ echo "Start" \
     && echo "manifest version $MANIFEST_VERSION" \
     && echo "packaging zip..." \
     && $SCRIPTS_DIR/package.sh \
+    && echo "packaged zip" \
     && check_curl_opts \
     && check_token \
     && echo "getting access token..." \
