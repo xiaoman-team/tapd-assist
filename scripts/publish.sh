@@ -122,7 +122,7 @@ publish_extension() {
     echo $status
 }
 
-get_crx_download_url() {
+get_crx_download_url0() {
     curl \
         $CURL_OPTS \
         -s \
@@ -132,6 +132,11 @@ get_crx_download_url() {
         sed 's/^Location:[ \t]*\(.*\)$/\1/'
 }
 
+get_crx_download_url() {
+    url=`get_crx_download_url0`
+    echo ${url%$'\r'} # remove the nasty '\r'
+}
+
 download_bin() {
     url=$1
     filename=$2
@@ -139,8 +144,8 @@ download_bin() {
     curl \
         $CURL_OPTS \
         -s \
-        $url \
-        > $filename
+        -o $filename \
+        "$url"
 }
 
 echo "Start" \
