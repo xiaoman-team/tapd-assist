@@ -9,3 +9,10 @@
 .topnav2 .company-name-wrap .company-name {
     width: 180px !important;
 }
+
+.assist-project-index {
+    color: white;
+    position: absolute;
+    left: 18px;
+    top: 14px;
+}

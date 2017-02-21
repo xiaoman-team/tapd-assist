@@ -1,4 +1,4 @@
-let patchPage = function (root) {
+let patchURLLink = function (root) {
   let replaceLinkInText = function (node) {
     let text = node.data;
     let splits = text.split(/[ \t\r\n]+/);
@@ -71,23 +71,148 @@ let patchPage = function (root) {
   detectAndReplaceLink(root);
 }
 
+let PROJECT_SHORTCUTS = {};
+
+let patchProjects = function () {
+  let root = document.getElementById('myprojects-list');
+  if (!root) {
+    console.warn('[tapd_assist] #myprojects-list not found');
+    return;
+  }
+
+  let projects = $(root).children('li');
+  let shortcuts = {};
+  for (let i = 0; i < projects.length; i++) {
+    let index = i + 1;
+    let li = projects[i];
+    if ($(li).hasClass('iamloaded')) {
+      continue;
+    }
+    li.style.position = 'relative';
+
+    let span = document.createElement('span');
+    span.className = 'assist-project-index';
+    span.textContent = index;
+    li.appendChild(span);
+
+    let anchor = $(li).children('a')[0];
+    if (anchor) {
+      anchor.setAttribute('project-index', i + 1);
+      shortcuts['Alt+' + index] = function () {
+        anchor.click();
+        span.textContent = '\u2713';
+        li.style.backgroundColor = '#303236';
+      }
+    }
+  }
+  PROJECT_SHORTCUTS = shortcuts;
+}
+
+patchProjects();
+
 let bodyDOMObserver = new MutationObserver(function(mutations) {
   mutations.forEach(function(mutation) {
     if (mutation.target.id === 'General_div' && mutation.addedNodes.length) {
       let root = document.getElementById('description_div');
       if (root) {
-        patchPage(root);
+        patchURLLink(root);
       } else {
         console.warn('[tapd_assist] #description_div not found');
       }
+    } else if (mutation.target.id === 'myprojects-list' && mutation.addedNodes.length) {
+      patchProjects();
     }
-    // console.log(mutation.type, mutation);
-  });    
+  });
 });
 
 bodyDOMObserver.observe(document.body, {
   childList: true,
   subtree: true
+});
+
+const SHORTCUTS = {
+  'Alt+Escape': '#left-tree-handle2',
+  'Alt+C': '#create-project',
+  'Alt+W': '#top_nav_worktable',
+  'Alt+M': '#top_nav_worktable_msg',
+  'Alt+H|Alt+ArrowLeft': function () {
+    let element = $('.page-btn.page-prev');
+    let anchor = element.children('a');
+    if (anchor.length) {
+      element = anchor;
+    }
+    let element1 = element[0];
+    if (element1) {
+      element1.click();
+    }
+  },
+  'Alt+L|Alt+ArrowRight': function () {
+    let element = $('.page-btn.page-next');
+    let anchor = element.children('a');
+    if (anchor.length) {
+      element = anchor;
+    }
+    let element1 = element[0];
+    if (element1) {
+      element1.click();
+    }
+  },
+  'Alt+F': function (e) {
+    e.preventDefault();
+    $('#search-keyword').focus().select();
+  },
+};
+
+let executeShortcuts = function (shortcuts, e) {
+  for (let key in shortcuts) {
+    let handler = shortcuts[key];
+    let keys = key.split('|');
+    keys.forEach(function (key) {
+      let splits = key.split('+').map(function (split) {return split.toLowerCase()});
+      let checkFKey = function (key) {
+        let index = splits.indexOf(key);
+        let down = e[key + 'Key'];
+        if (index >= 0) {
+          splits.splice(index, 1);
+          return down;
+        }
+        return !down;
+      };
+      let code = e.code;
+      if (code.startsWith('Key')) {
+        code = code.substr(3);
+      } else if (code.startsWith('Digit')) {
+        code = code.substr(5);
+      }
+      let matched = checkFKey('alt')
+        && checkFKey('shift')
+        && checkFKey('ctrl')
+        && checkFKey('meta')
+        && splits.length === 1
+        && splits[0] === code.toLowerCase()
+      ;
+      if (!matched) {
+        return;
+      }
+      if (typeof handler === 'string') {
+        let element = $(handler)[0];
+        if (element) {
+          element.click();
+        } else {
+          console.warn('Invalid shortcut handler: document.getElementById empty', handler);
+        }
+      } else if (typeof handler === 'function') {
+        handler(e);
+      } else {
+        console.warn('Invalid shortcut handler', typeof handler, handler);
+      }
+    });
+  }
+}
+
+document.addEventListener('keydown', function (e) {
+  executeShortcuts(SHORTCUTS, e);
+  executeShortcuts(PROJECT_SHORTCUTS, e);
 });
 
 // bodyDOMObserver.disconnect();

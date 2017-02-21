@@ -10,6 +10,16 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 
 * Custom URL schema support
 
+* Shortcuts
+  * [Alt+Esc] toggle project list
+  * [Alt+Num] Num=1,2,3,4..., switch to project *Num*
+  * [Alt+C] create project
+  * [Alt+W] open worktable
+  * [Alt+M] open messages
+  * [Alt+H or Alt+Left] left page
+  * [Alt+L or Alt+Right] left page
+  * [Alt+F] search
+
 ### TODO
 
 * Shortcuts
