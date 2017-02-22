@@ -134,7 +134,15 @@ const SHORTCUTS = {
   'Alt+Escape': '#left-tree-handle2',
   'Alt+C': '#create-project',
   'Alt+W': '#top_nav_worktable',
-  'Alt+M': '#top_nav_worktable_msg',
+  'Alt+N': '#top_nav_worktable_msg',
+  'Alt+M': function () {
+    let re = new RegExp('^https://www\\.tapd\\.cn/([0-9]+)/.*$');
+    let m = re.exec(window.location.href);
+    if (m) {
+      let projectId = m[1];
+      window.location.href = 'https://www.tapd.cn/' + projectId + '/settings/team';
+    }
+  },
   'Alt+H|Alt+ArrowLeft': function () {
     let element = $('.page-btn.page-prev');
     let anchor = element.children('a');
