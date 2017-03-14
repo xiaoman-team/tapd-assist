@@ -130,17 +130,32 @@ bodyDOMObserver.observe(document.body, {
   subtree: true
 });
 
+function getProjectId (url) {
+  if (url === undefined) {
+    url = window.location.href
+  }
+  let re = new RegExp('^https://www\\.tapd\\.cn/([0-9]+)/.*$');
+  let m = re.exec(url);
+  if (m) {
+    return m[1]
+  }
+}
+
 const SHORTCUTS = {
   'Alt+Escape': '#left-tree-handle2',
   'Alt+C': '#create-project',
   'Alt+W': '#top_nav_worktable',
   'Alt+N': '#top_nav_worktable_msg',
   'Alt+M': function () {
-    let re = new RegExp('^https://www\\.tapd\\.cn/([0-9]+)/.*$');
-    let m = re.exec(window.location.href);
-    if (m) {
-      let projectId = m[1];
+    let projectId = getProjectId();
+    if (projectId) {
       window.location.href = 'https://www.tapd.cn/' + projectId + '/settings/team';
+    }
+  },
+  'Alt+B': function () {
+    let projectId = getProjectId();
+    if (projectId) {
+      window.location.href = 'https://www.tapd.cn/' + projectId + '/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008';
     }
   },
   'Alt+H|Alt+ArrowLeft': function () {
