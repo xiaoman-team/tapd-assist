@@ -15,7 +15,8 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * [Alt+Num] Num=1,2,3,4..., switch to project *Num*
   * [Alt+C] create project
   * [Alt+M] project members
-  * [Alt+B] bug/dealer report
+  * [Alt+R] newest requirements report or do nothing
+  * [Alt+B] newest customized bug report or bug/dealer report
 
   * [Alt+W] open worktable
   * [Alt+N] open notification messages
@@ -24,8 +25,5 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * [Alt+F] search
 
 ### TODO
-
-* Shortcuts
-  * shortcut for `#previous_element` and `#next_element`
 
 * after click `#btn_update_exit`, clean empty `<a>` in editor

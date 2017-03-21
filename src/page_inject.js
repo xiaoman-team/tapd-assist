@@ -141,6 +141,27 @@ function getProjectId (url) {
   }
 }
 
+function getProjectUrl (path) {
+  let projectId = getProjectId();
+  if (projectId) {
+    return 'https://www.tapd.cn/' + projectId + path;
+  }
+}
+
+function ajax(options) {
+  return $.ajax(Object.assign({
+    xhr: function() {
+      let xhr = jQuery.ajaxSettings.xhr();
+      let setRequestHeader = xhr.setRequestHeader;
+      xhr.setRequestHeader = function(name, value) {
+        if (name == 'X-Requested-With') return;
+        setRequestHeader.call(this, name, value);
+      }
+      return xhr;
+    },
+  }, options));
+}
+
 const SHORTCUTS = {
   'Alt+Escape': '#left-tree-handle2',
   'Alt+C': '#create-project',
@@ -149,13 +170,51 @@ const SHORTCUTS = {
   'Alt+M': function () {
     let projectId = getProjectId();
     if (projectId) {
-      window.location.href = 'https://www.tapd.cn/' + projectId + '/settings/team';
+      window.location.href = getProjectUrl('/settings/team');
+    }
+  },
+  'Alt+R': function () {
+    let projectId = getProjectId();
+    if (projectId) {
+      let defaultAnchor = getProjectUrl('/prong/stories/stats_charts');
+      ajax({
+        url: getProjectUrl('/prong/stories/stats_charts')
+      }).then(function (data) {
+        let htmlDoc = $.parseHTML(data);
+        let hrefs = $(htmlDoc)
+          .find('#custom-statistics ul.custom-statistic-list li a')
+          .toArray()
+          .map(a => a.getAttribute('href'))
+        let anchor = hrefs[0];
+        if (anchor) {
+          window.location.href = anchor;
+        }
+      }, function (err) {
+      })
     }
   },
   'Alt+B': function () {
     let projectId = getProjectId();
     if (projectId) {
-      window.location.href = 'https://www.tapd.cn/' + projectId + '/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008';
+      let defaultAnchor = getProjectUrl('/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008');
+      ajax({
+        url: getProjectUrl('/bugtrace/bugreports/index_simple')
+      }).then(function (data) {
+        let htmlDoc = $.parseHTML(data);
+        let hrefs = $(htmlDoc)
+          .find('.tbox-content ul li a')
+          .toArray()
+          .map(a => a.getAttribute('href'))
+          .filter(href => href.indexOf('/bugtrace/bugreports/stat_general/general/customreport-') >= 0)
+        let anchor = hrefs[0];
+        if (anchor) {
+          window.location.href = anchor;
+        } else {
+          window.location.href = defaultAnchor;
+        }
+      }, function (err) {
+        window.location.href = defaultAnchor;
+      })
     }
   },
   'Alt+H|Alt+ArrowLeft': function () {
