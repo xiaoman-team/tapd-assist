@@ -188,8 +188,11 @@ const SHORTCUTS = {
         let anchor = hrefs[0];
         if (anchor) {
           window.location.href = anchor;
+        } else {
+          window.location.href = defaultAnchor;
         }
       }, function (err) {
+        window.location.href = defaultAnchor;
       })
     }
   },
