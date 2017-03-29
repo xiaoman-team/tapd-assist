@@ -52,7 +52,7 @@ let patchURLLink = function (root) {
 
 
   let detectAndReplaceLink;
-  
+
   detectAndReplaceLink = function (parent) {
     let childNodes = parent.childNodes;
     childNodes.forEach(function (node) {
@@ -110,8 +110,8 @@ let patchProjects = function () {
 
 patchProjects();
 
-let bodyDOMObserver = new MutationObserver(function(mutations) {
-  mutations.forEach(function(mutation) {
+let bodyDOMObserver = new MutationObserver(function (mutations) {
+  mutations.forEach(function (mutation) {
     if (mutation.target.id === 'General_div' && mutation.addedNodes.length) {
       let root = document.getElementById('description_div');
       if (root) {
@@ -130,7 +130,7 @@ bodyDOMObserver.observe(document.body, {
   subtree: true
 });
 
-function getProjectId (url) {
+function getProjectId(url) {
   if (url === undefined) {
     url = window.location.href
   }
@@ -141,7 +141,7 @@ function getProjectId (url) {
   }
 }
 
-function getProjectUrl (path) {
+function getProjectUrl(path) {
   let projectId = getProjectId();
   if (projectId) {
     return 'https://www.tapd.cn/' + projectId + path;
@@ -150,10 +150,10 @@ function getProjectUrl (path) {
 
 function ajax(options) {
   return $.ajax(Object.assign({
-    xhr: function() {
+    xhr: function () {
       let xhr = jQuery.ajaxSettings.xhr();
       let setRequestHeader = xhr.setRequestHeader;
-      xhr.setRequestHeader = function(name, value) {
+      xhr.setRequestHeader = function (name, value) {
         if (name == 'X-Requested-With') return;
         setRequestHeader.call(this, name, value);
       }
@@ -246,52 +246,56 @@ const SHORTCUTS = {
     e.preventDefault();
     $('#search-keyword').focus().select();
   },
+  'Alt': function (e) {
+    console.log('alt1111111111111111')
+  },
 };
 
 let executeShortcuts = function (shortcuts, e) {
+  let fnKeys = ['alt', 'ctrl', 'meta', 'shift']
+  let downFnKeys = fnKeys.filter(function (f) {
+    return e[f + 'Key']
+  })
+
+  let code = e.code.toLowerCase().replace(/^(key|digit)/, '');
+  let isFnKeys = ['alt', 'control', 'meta', 'shift'].some(function (f) {
+    return code.startsWith(f)
+  })
+
+  let shortcutMap = {};
   for (let key in shortcuts) {
     let handler = shortcuts[key];
     let keys = key.split('|');
-    keys.forEach(function (key) {
-      let splits = key.split('+').map(function (split) {return split.toLowerCase()});
-      let checkFKey = function (key) {
-        let index = splits.indexOf(key);
-        let down = e[key + 'Key'];
-        if (index >= 0) {
-          splits.splice(index, 1);
-          return down;
-        }
-        return !down;
-      };
-      let code = e.code;
-      if (code.startsWith('Key')) {
-        code = code.substr(3);
-      } else if (code.startsWith('Digit')) {
-        code = code.substr(5);
-      }
-      let matched = checkFKey('alt')
-        && checkFKey('shift')
-        && checkFKey('ctrl')
-        && checkFKey('meta')
-        && splits.length === 1
-        && splits[0] === code.toLowerCase()
-      ;
-      if (!matched) {
-        return;
-      }
-      if (typeof handler === 'string') {
-        let element = $(handler)[0];
-        if (element) {
-          element.click();
-        } else {
-          console.warn('Invalid shortcut handler: document.getElementById empty', handler);
-        }
-      } else if (typeof handler === 'function') {
-        handler(e);
-      } else {
-        console.warn('Invalid shortcut handler', typeof handler, handler);
-      }
-    });
+    keys.forEach(function (k) {
+      let splits = k.toLowerCase().split('+').map(function (split) {
+        return split.trim()
+      }).sort().join('+');
+      shortcutMap[splits] = handler;
+    })
+  }
+
+  let downKeys = downFnKeys
+  if (!isFnKeys) {
+    downKeys = downKeys.concat(code)
+  }
+  downKeys = downKeys.slice().sort().join('+')
+
+  let handler = shortcutMap[downKeys]
+  if (!handler) {
+    return;
+  }
+
+  if (typeof handler === 'string') {
+    let element = $(handler)[0];
+    if (element) {
+      element.click();
+    } else {
+      console.warn('Invalid shortcut handler: document.getElementById empty', handler);
+    }
+  } else if (typeof handler === 'function') {
+    handler(e);
+  } else {
+    console.warn('Invalid shortcut handler', typeof handler, handler);
   }
 }
 
@@ -305,9 +309,9 @@ document.addEventListener('keydown', function (e) {
 chrome.extension.sendMessage({
   type: 'setTabIcon',
   path: {
-      "16": "image/main_icon_16.png",
-      "24": "image/main_icon_24.png",
-      "32": "image/main_icon_32.png"
+    "16": "image/main_icon_16.png",
+    "24": "image/main_icon_24.png",
+    "32": "image/main_icon_32.png"
   }
 });
 
