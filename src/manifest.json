@@ -5,7 +5,8 @@
   "version": "0.1.11",
   "background": {
     "scripts":[
-      "background.js"
+      "background.js",
+      "jquery.js"
     ]
   },
   "icons":{

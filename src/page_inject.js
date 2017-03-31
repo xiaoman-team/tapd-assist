@@ -246,9 +246,33 @@ const SHORTCUTS = {
     e.preventDefault();
     $('#search-keyword').focus().select();
   },
-  'Alt': function (e) {
-    console.log('alt1111111111111111')
-  },
+  'Alt': (function () {
+    let dialog
+    let loadding = false
+    let getTemplate = function (callback) {
+      loadding = true
+      chrome.extension.sendRequest({
+        cmd: 'readFile',
+        url: chrome.extension.getURL('tpls/help_panel.tpl'),
+      }, function (data) {
+        loadding = false
+        let div = $('<div />')
+        div.html(data)       
+        dialog = div.find('#tapdAssistHelpPanel')
+        dialog.show()
+        $('body').append(dialog)
+        callback && callback(data)
+      })
+    }
+    return function (e) {
+      if (!dialog && !loadding) {
+        getTemplate()
+      }
+      if (dialog) {
+        dialog.show()
+      }
+    }
+  })(),
 };
 
 let executeShortcuts = function (shortcuts, e) {
@@ -280,6 +304,8 @@ let executeShortcuts = function (shortcuts, e) {
   }
   downKeys = downKeys.slice().sort().join('+')
 
+  console.log('downKeys', downKeys)
+
   let handler = shortcutMap[downKeys]
   if (!handler) {
     return;
@@ -303,6 +329,15 @@ document.addEventListener('keydown', function (e) {
   executeShortcuts(SHORTCUTS, e);
   executeShortcuts(PROJECT_SHORTCUTS, e);
 });
+
+document.addEventListener('keyup', function (e) {
+  if (e.key === 'Alt') {
+    let dialog = $('#tapdAssistHelpPanel')
+    if (dialog.length) {
+      dialog.hide()
+    }
+  }
+})
 
 // bodyDOMObserver.disconnect();
 

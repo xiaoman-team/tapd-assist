@@ -19,3 +19,19 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   }
 });
 
+
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+  switch (request.cmd) {
+    case 'readFile': {
+      $.get(request.url, function (data) {
+        sendResponse(data)
+      })
+      break;
+    }
+    default: {
+      console.log('[tapd_assist] unknown request', request.cmd, request);
+      break;
+    }
+  }
+});
