@@ -4,12 +4,12 @@
 EXTENSION_ID=ifnplghlomamhddgdknfcennkpcjcoke
 
 # token got from https://console.developers.google.com/apis/credentials?project=xiaomanassistextension&authuser=1
-CLIENT_ID=941813370135-unca1mt7pch2nje1j8qfpk83344sv8dn.apps.googleusercontent.com
-CLIENT_SECRET=EcKyG5WpHsIQmGx_Tucx8lxL
+CLIENT_ID=$CLIENT_ID
+CLIENT_SECRET=$CLIENT_SECRET
 
 # generated token
-CLIENT_CODE=4/g6LjtFC1e1277_k_R7MiP-5BtS9xZyhF_-wWWnLR1r0
-REFRESH_TOKEN=1/hES444bpThWSDYZ4qhhVXRyZfVkRTNB3l6foKC1oFGw
+CLIENT_CODE=$CLIENT_CODE
+REFRESH_TOKEN=$REFRESH_TOKEN
 
 
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -24,8 +24,8 @@ get_manifest_version() {
 check_curl_opts() {
     if [ "$CURL_OPTS" = "" ]; then
         echo '\033[0;31m[Warn]\033[0m \033[1;33mthis script will access Google services. You can config CURL_OPTS to fuck GFW\033[0m'
-        echo '    CURL_OPTS="--proxy=http://localhost:8000/" ./scripts/publish.sh'
-        echo ' or CURL_OPTS="--socks5-hostname localhost:2080" ./scripts/publish.sh'
+        echo '    CURL_OPTS="--proxy=http://localhost:1087/" ./scripts/publish.sh'
+        echo ' or CURL_OPTS="--socks5-hostname localhost:1086" ./scripts/publish.sh'
     fi
 }
 
