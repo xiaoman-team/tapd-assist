@@ -125,6 +125,8 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
   });
 });
 
+$('.comment_con_main').toArray().forEach(patchURLLink);
+
 bodyDOMObserver.observe(document.body, {
   childList: true,
   subtree: true
