@@ -6,7 +6,7 @@ $(function (e) {
     let selection = window.getSelection();
     if (selection.type !== 'Range') {
       $('#title-copy-btn').click();
-      window.TFL.tips.showFlash('【小满助手】标题与链接已复制到剪贴板中')
+      window.TFL.tips.showFlash('【TAPD助手】标题与链接已复制到剪贴板中')
     }
   });
 });
