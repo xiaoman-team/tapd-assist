@@ -7,8 +7,11 @@ $(function (e) {
     let selection = window.getSelection();
     let nothingSelected = !selection.toString();
     if (nothingSelected) {
-      $('#title-copy-btn').click();
-      window.TFL.tips.showFlash('【TAPD助手】标题与链接已复制到剪贴板中');
+      let btn = $('#title-copy-btn')
+      btn.click();
+      if (btn.length) {
+        window.TFL.tips.showFlash('【TAPD助手】标题与链接已复制到剪贴板中');
+      }
     }
   });
 });
