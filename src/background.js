@@ -19,8 +19,6 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   }
 });
 
-
-
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
   switch (request.cmd) {
     case 'readFile': {

@@ -1,0 +1,15 @@
+.ta-popup {
+  font-size: 14px;
+  -webkit-user-select: none;
+  padding: 0;
+  margin: 0;
+  width: 300px;
+  position: relative;
+  overflow: hidden
+}
+.ta-fn-list {
+  list-style: none;
+}
+.ta-fn-list li {
+  cursor: pointer;
+}

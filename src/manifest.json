@@ -5,8 +5,8 @@
   "version": "0.1.11",
   "background": {
     "scripts":[
-      "background.js",
-      "jquery.js"
+      "jquery.js",
+      "background.js"
     ]
   },
   "icons":{
@@ -20,9 +20,11 @@
       "24": "image/main_icon_off_24.png",
       "32": "image/main_icon_off_32.png"
     },
-    "default_title": "TAPD助手"
+    "default_title": "TAPD助手",
+    "default_popup": "popup.html"
   },
   "permissions": [
+    "storage",
     "tabs",
     "http://*.tapd.cn/",
     "https://*.tapd.cn/"

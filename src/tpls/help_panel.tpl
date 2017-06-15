@@ -20,7 +20,7 @@
           <div class="quickhelp"><span class="shortcut-key"><kbd>[Alt+L or Alt+Right]</kbd></span><span class="shortcut-descr"> left page</span></div>
           <div class="quickhelp"><span class="shortcut-key"><kbd>[Alt+F]</kbd></span><span class="shortcut-descr"> search</span></div>
         </div>
-        <div class="modal-footer"><button class="btn">关闭</button></div>
+        <div class="modal-footer"><button class="btn" data-dismiss="modal">关闭</button></div>
       </div>
     </div>
   </div>

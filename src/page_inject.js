@@ -162,8 +162,29 @@ function ajax(options) {
   }, options));
 }
 
+let dialog
+chrome.extension.sendRequest({
+  cmd: 'readFile',
+  url: chrome.extension.getURL('tpls/help_panel.tpl'),
+}, function (data) {
+  let div = $('<div />')
+  div.html(data)       
+  dialog = div.find('#tapdAssistHelpPanel')
+  dialog.hide()
+  dialog.on('click.closeModal', '[data-dismiss="modal"]', function () {
+    dialog.hide()
+  })
+  $('body').append(dialog)
+})
+
+let menuLock = false
+
 const SHORTCUTS = {
-  'Alt+Escape': '#left-tree-handle2',
+  'Alt+Escape': function () {
+    if (!$('body').hasClass('.left-tree-close')) {
+      menuLock = true
+    }
+  },
   'Alt+C': '#create-project',
   'Alt+W': '#top_nav_worktable',
   'Alt+N': '#top_nav_worktable_msg',
@@ -246,33 +267,21 @@ const SHORTCUTS = {
     e.preventDefault();
     $('#search-keyword').focus().select();
   },
-  'Alt': (function () {
-    let dialog
-    let loadding = false
-    let getTemplate = function (callback) {
-      loadding = true
-      chrome.extension.sendRequest({
-        cmd: 'readFile',
-        url: chrome.extension.getURL('tpls/help_panel.tpl'),
-      }, function (data) {
-        loadding = false
-        let div = $('<div />')
-        div.html(data)       
-        dialog = div.find('#tapdAssistHelpPanel')
-        dialog.show()
-        $('body').append(dialog)
-        callback && callback(data)
-      })
-    }
-    return function (e) {
-      if (!dialog && !loadding) {
-        getTemplate()
-      }
-      if (dialog) {
-        dialog.show()
-      }
-    }
-  })(),
+  'Shift+Slash': function () {
+    dialog.show()
+  },
+  'Alt': function () {
+    dialog.show()
+    $('body').removeClass('left-tree-close')
+  },
+  'Alt+K': function () {
+    chrome.storage.sync.get('shortcut', function (val) {
+      console.log(val)
+    })
+  },
+  'Ctrl+C|Meta+C': function () {
+    $('#title-copy-btn')[0].click()
+  }
 };
 
 let executeShortcuts = function (shortcuts, e) {
@@ -332,9 +341,9 @@ document.addEventListener('keydown', function (e) {
 
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Alt') {
-    let dialog = $('#tapdAssistHelpPanel')
-    if (dialog.length) {
-      dialog.hide()
+    dialog.hide()
+    if (!menuLock) {
+      $('body').addClass('left-tree-close minimenu')
     }
   }
 })
