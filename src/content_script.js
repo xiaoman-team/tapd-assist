@@ -321,7 +321,7 @@ let executeShortcuts = function (shortcuts, e) {
   }
   downKeys = downKeys.slice().sort().join('+')
 
-  console.log('downKeys', downKeys)
+  // console.log('downKeys', downKeys)
 
   let handler = shortcutMap[downKeys]
   if (!handler) {
