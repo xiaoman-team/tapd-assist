@@ -282,8 +282,13 @@ const SHORTCUTS = {
       console.log(val)
     })
   },
-  'Ctrl+C|Meta+C': function () {
-    document.dispatchEvent(new Event('try:copy:title'));
+  'Ctrl+C|Meta+C': function (e, keys) {
+    let event = document.createEvent("CustomEvent");
+    event.initCustomEvent('try:copy:title', true, true, { // failed to pass data, why?
+      keys: keys,
+      event: e
+    })
+    document.dispatchEvent(event);
   }
 };
 
@@ -331,7 +336,7 @@ let executeShortcuts = function (shortcuts, e) {
       console.warn('Invalid shortcut handler: document.getElementById empty', handler);
     }
   } else if (typeof handler === 'function') {
-    handler(e);
+    handler(e, downKeys);
   } else {
     console.warn('Invalid shortcut handler', typeof handler, handler);
   }
