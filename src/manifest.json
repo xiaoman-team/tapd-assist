@@ -36,12 +36,15 @@
         "https://*.tapd.cn/*"
       ],
       "css": [
-        "page_inject.css"
+        "content_script.css"
       ],
       "js": [
         "jquery.js",
-        "page_inject.js"
+        "content_script.js"
       ]
     }
+  ],
+  "web_accessible_resources": [
+    "page_inject.js"
   ]
 }
