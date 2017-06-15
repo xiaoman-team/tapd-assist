@@ -125,6 +125,8 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
   });
 });
 
+$('.comment_con_main').toArray().forEach(patchURLLink);
+
 bodyDOMObserver.observe(document.body, {
   childList: true,
   subtree: true
@@ -134,7 +136,7 @@ function getProjectId(url) {
   if (url === undefined) {
     url = window.location.href
   }
-  let re = new RegExp('^https://www\\.tapd\\.cn/([0-9]+)/.*$');
+  let re = new RegExp('^https://www\\.tapd\\.cn//?([0-9]+)/.*$');
   let m = re.exec(url);
   if (m) {
     return m[1]

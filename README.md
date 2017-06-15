@@ -27,7 +27,6 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 ### TODO
 
 * after click `#btn_update_exit`, clean empty `<a>` in editor
-* replace schema in task comments
 * help panel
 * more enhanced Alt operation
 * configurable shortcuts
