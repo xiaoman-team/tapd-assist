@@ -58,7 +58,10 @@ let patchURLLink = function (root) {
     childNodes.forEach(function (node) {
       detectAndReplaceLink(node);
 
-      if (parent.nodeName.toLowerCase() !== 'a' && node.nodeName.toLowerCase() === '#text') {
+      const patchExcludes = ['a', 'style']
+      let parentNodeName = parent.nodeName.toLowerCase()
+      let nodeName = node.nodeName.toLowerCase()
+      if (patchExcludes.indexOf(parentNodeName) < 0 && nodeName === '#text') {
         let newNode = replaceLinkInText(node);
         if (newNode) {
           parent.insertBefore(newNode, node);
@@ -283,11 +286,12 @@ const SHORTCUTS = {
     })
   },
   'Ctrl+C|Meta+C': function (e, keys) {
-    let event = document.createEvent("CustomEvent");
-    event.initCustomEvent('try:copy:title', true, true, { // failed to pass data, why?
-      keys: keys,
-      event: e
-    })
+    let event = new CustomEvent("try:copy:title", {
+      detail: {
+        keys: keys,
+        event: e
+      }
+    });
     document.dispatchEvent(event);
   }
 };
