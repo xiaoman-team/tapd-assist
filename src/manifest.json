@@ -40,11 +40,13 @@
       ],
       "js": [
         "jquery.js",
+        "utils.js",
         "content_script.js"
       ]
     }
   ],
   "web_accessible_resources": [
+    "utils.js",
     "page_inject.js"
   ]
 }

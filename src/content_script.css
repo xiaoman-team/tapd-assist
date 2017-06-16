@@ -141,15 +141,16 @@
   user-select: none;
 }
 
+.modal .quickhelp {
+  margin: 8px 0;
+}
+
 .modal kbd {
   border-style: solid;
   border-width: 1px;
   box-shadow: none;
   margin: 2px;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-top: 1px;
-  padding-bottom: 1px;
+  padding: 2px 4px;
   white-space: pre-wrap;
   font-size: 90%;
   color: #888;
