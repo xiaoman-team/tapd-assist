@@ -1,0 +1,22 @@
+{
+  "name": "tapd-assist",
+  "version": "0.0.1",
+  "description": "Chrome extension for TAPD",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@git.xiaoman.co:7999/cm/tapd-assist.git"
+  },
+  "keywords": [
+    "TAPD",
+    "Chrome",
+    "Extension"
+  ],
+  "author": "hao@xiaoman.cn;sisi@xiaoman.cn",
+  "license": "PRIVATE"
+}
