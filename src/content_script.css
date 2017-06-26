@@ -139,19 +139,59 @@
   user-select: none;
 }
 
+.modal .modal-body {
+  display: -webkit-box;
+  display: flex;
+  padding: 28px 20px 21px;
+  -webkit-box-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
 .modal .quickhelp {
-  margin: 8px 0;
+  display: -webkit-box;
+  display: flex;
+  width: 148px;
+  height: 120px;
+  margin-right: 20px;
+  text-align: center;
+  cursor: pointer;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  flex-direction: column;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.modal .quickhelp:hover {
+  background-color: #f9f9f9;
+}
+
+.modal .shortcut-key {
+  display: block;
 }
 
 .modal kbd {
-  border-style: solid;
-  border-width: 1px;
+  display: block;
+  text-align: center;
   box-shadow: none;
   margin: 2px;
   padding: 2px 4px;
   white-space: pre-wrap;
-  font-size: 90%;
-  color: #888;
+  font-size: 24px;
+  font-family: sans-serif;
+  color: white;
   background-color: transparent;
-  border-radius: 1px;
+  color: rgba(0,0,0,.87);
 }
+
+.modal .shortcut-description {
+  display: block;
+  color: rgba(0,0,0,.57);
+}
+
