@@ -48,27 +48,36 @@ const SHORTCUTS = {
       menuLock = true
     }
   },
-  'Alt+C': '#create-project',
-  'Alt+W': '#top_nav_worktable',
-  'Alt+N': '#top_nav_worktable_msg',
+  'Alt+C': {
+    target: '#create-project',
+    description: '创建项目...'
+  },
+  'Alt+W': {
+    target: '#top_nav_worktable',
+    description: '正在跳转工作台...'
+  },
+  'Alt+N': {
+    target: '#top_nav_worktable_msg',
+    description: '正在跳转消息页面...'
+  },
   'Alt+M': function () {
     let projectId = tapdAssistUtils.getProjectId()
     if (!projectId) {
-      tapdAssistUtils.showFlash('【小满助手】当前不是项目页面')
+      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
       return
     }
 
-    tapdAssistUtils.showFlash('【小满助手】正在跳转团队成员...')
+    tapdAssistUtils.showFlash('正在跳转团队成员...')
     window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
   },
   'Alt+R': function () {
     let projectId = tapdAssistUtils.getProjectId()
     if (!projectId) {
-      tapdAssistUtils.showFlash('【小满助手】当前不是项目页面')
+      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
       return
     }
 
-    tapdAssistUtils.showFlash('【小满助手】正在跳转需求统计报表...')
+    tapdAssistUtils.showFlash('正在跳转需求统计报表...')
     let defaultAnchor = tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
     tapdAssistUtils.ajax({
       url: tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
@@ -91,11 +100,11 @@ const SHORTCUTS = {
   'Alt+B': function () {
     let projectId = tapdAssistUtils.getProjectId()
     if (!projectId) {
-      tapdAssistUtils.showFlash('【小满助手】当前不是项目页面')
+      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
       return
     }
 
-    tapdAssistUtils.showFlash('【小满助手】正在跳转缺陷统计报表...')
+    tapdAssistUtils.showFlash('正在跳转缺陷统计报表...')
     let defaultAnchor = tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008')
     tapdAssistUtils.ajax({
       url: tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/index_simple')
@@ -143,7 +152,7 @@ const SHORTCUTS = {
     $('#search-keyword').focus().select()
   },
   'Shift+Slash': function () {
-    dialog.show()
+    dialog.toggle()
   },
   'Alt': function () {
     altDownAt = Date.now()
@@ -192,7 +201,6 @@ let executeShortcuts = function (shortcuts, e) {
     downKeys = downKeys.concat(code)
   }
   downKeys = downKeys.slice().sort().join('+')
-
   // console.log('downKeys', downKeys)
 
   let handler = shortcutMap[downKeys]
@@ -200,17 +208,27 @@ let executeShortcuts = function (shortcuts, e) {
     return
   }
 
-  if (typeof handler === 'string') {
-    let element = $(handler)[0]
-    if (element) {
-      element.click()
-    } else {
-      console.warn('Invalid shortcut handler: document.getElementById empty', handler)
-    }
-  } else if (typeof handler === 'function') {
+  if (typeof handler === 'function') {
     handler(e, downKeys)
+    return
+  }
+  let target
+  let description
+  if (typeof handler === 'string') {
+    target = handler
+    description = undefined
   } else {
-    console.warn('Invalid shortcut handler', typeof handler, handler)
+    target = handler.target
+    description = handler.description
+  }
+  let element = $(target)[0]
+  if (!element) {
+    console.warn('Invalid shortcut handler: document.getElementById empty', handler)
+    return
+  }
+  element.click()
+  if (description) {
+    tapdAssistUtils.showFlash(description)
   }
 }
 

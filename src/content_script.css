@@ -1,23 +1,21 @@
 .topnav-logo {
-    width: 70px !important;
+  width: 70px !important;
 }
 
 .topnav2 .company-name-wrap {
-    width: 224px !important;
+  width: 224px !important;
 }
 
 .topnav2 .company-name-wrap .company-name {
-    width: 180px !important;
+  width: 180px !important;
 }
 
 .assist-project-index {
-    color: white;
-    position: absolute;
-    left: 18px;
-    top: 14px;
+  color: white;
+  position: absolute;
+  left: 18px;
+  top: 14px;
 }
-
-
 
 .modal-open {
   overflow: hidden;
@@ -41,7 +39,7 @@
 .modal-dialog {
   position: relative;
   width: auto;
-  margin: 120px 220px 10px 220px;
+  margin: 120px 230px 10px 230px;
 }
 .modal-content {
   position: relative;
@@ -62,7 +60,7 @@
   left: 0;
   z-index: 1040;
   background-color: #000;
-  opacity: 0.5;
+  opacity: 0.3;
   filter: alpha(opacity=50);
 }
 

@@ -17,7 +17,7 @@ $(function (e) {
           let btn = $('#title-copy-btn')
           btn.click()
           if (btn.length) {
-            tapdAssistUtils.showFlash('【TAPD助手】标题与链接已复制到剪贴板中')
+            tapdAssistUtils.showFlash('标题与链接已复制到剪贴板中')
           }
         }
         break

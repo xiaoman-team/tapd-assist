@@ -42,15 +42,19 @@ let tapdAssistUtils = {
     let text
     let keep = true
     let delay = 3000
+    let prefix = '【TAPD助手】'
     if (typeof data === 'string') {
       text = data
     } else {
       keep = data.keep
-      if (data.delay) {
+      if ('delay' in data) {
         delay = data.delay
       }
+      if ('prefix' in data) {
+        prefix = data.prefix
+      }
     }
-    window.TFL.tips.showFlash(text, keep, delay)
+    window.TFL.tips.showFlash(prefix + text, keep, delay)
   },
   injectScript: function (file) {
     let script = document.createElement('script')
@@ -157,7 +161,7 @@ let tapdAssistUtils = {
         anchor.setAttribute('project-index', i + 1)
         shortcuts['Alt+' + index] = function () {
           if (name) {
-            tapdAssistUtils.showFlash('【小满即时通】正在跳转到' + name + '...')
+            tapdAssistUtils.showFlash('正在跳转到' + name + '...')
           }
           anchor.click()
           span.textContent = '\u2713'
