@@ -20,24 +20,21 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 
   * [Alt+W] open worktable
   * [Alt+N] open notification messages
-  * [Alt+H or Alt+Left] left page
-  * [Alt+L or Alt+Right] left page
+  * [Alt+H/Alt+Left] left page
+  * [Alt+L/Alt+Right] left page
   * [Alt+F] search
+  * [Shift+?] show help
+  * [Ctrl+C/Cmd+C] copy feature/bug title and url
 
 ### TODO
 
 * after click `#btn_update_exit`, clean empty `<a>` in editor
-* help panel
-* more enhanced Alt operation
 * configurable shortcuts
 
 
 ### 路线图Roadmap:
 
-1. 按下Alt，推出项目列表，显示快捷入口；抬起Alt，收起项目列表，隐藏快捷入口。
-2. Shift+?，显示帮助。
-3. 配置页面，可以配置触发键为Alt或者Ctrl或者Cmd等。
-4. 丰富点击插件图标时的动作。
-5. 关于页面。
-6. 移除项目中的秘钥信息，开发源代码。
+1. 配置页面，可以配置触发键为Alt或者Ctrl或者Cmd等。
+2. 丰富点击插件图标时的动作。
+3. 关于页面。
 
