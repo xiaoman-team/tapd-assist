@@ -10,9 +10,9 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       } else {
         console.warn('[tapd_assist] #description_div not found')
       }
-      tapdAssistUtils.patchProjectList()
+      PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
     } else if (mutation.target.id === 'myprojects-list' && mutation.addedNodes.length) {
-      tapdAssistUtils.patchProjectList()
+      PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
     }
   })
 })
