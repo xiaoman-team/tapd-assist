@@ -65,6 +65,10 @@
             <span class="shortcut-key"><kbd>Alt+M</kbd></span>
             <span class="shortcut-description">项目成员列表</span>
           </div>
+          <div class="quickhelp">
+            <span class="shortcut-key"><kbd>Shift+?</kbd></span>
+            <span class="shortcut-description">显示当前帮助信息</span>
+          </div>
         </div>
         <div class="modal-footer"><button class="btn" data-dismiss="modal">关闭</button></div>
       </div>
