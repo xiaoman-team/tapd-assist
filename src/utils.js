@@ -153,8 +153,12 @@ let tapdAssistUtils = {
 
       let anchor = $(li).children('a')[0]
       if (anchor) {
+        let name = anchor.title
         anchor.setAttribute('project-index', i + 1)
         shortcuts['Alt+' + index] = function () {
+          if (name) {
+            tapdAssistUtils.showFlash('【小满即时通】正在跳转到' + name + '...')
+          }
           anchor.click()
           span.textContent = '\u2713'
           li.style.backgroundColor = '#303236'
