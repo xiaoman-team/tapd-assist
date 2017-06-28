@@ -80,6 +80,9 @@ let tapdAssistUtils = {
       } catch (err) {
         return
       }
+      if (url.origin === split || url.protocol === split) {
+        return
+      }
 
       if (index > index0) {
         let str = text.substring(index0, index)
@@ -89,7 +92,7 @@ let tapdAssistUtils = {
       let a = document.createElement('a')
       a.href = split
       a.textContent = decodeURIComponent(split)
-      if (['https:', 'http:'].indexOf(a.protocol)) {
+      if (['https:', 'http:'].indexOf(a.protocol) < 0) {
         a.title = '点击打开' + a.protocol + '//协议'
       }
       children.push(a)
