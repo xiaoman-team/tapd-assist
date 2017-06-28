@@ -152,6 +152,13 @@ const SHORTCUTS = {
     $('#search-keyword').focus().select()
   },
   'Shift+Slash': function () {
+    let element = document.activeElement
+    let isTextarea = element.tagName === 'TEXTAREA'
+    let isInput = element.tagName === 'INPUT' && ['text', 'password', 'search', 'url'].indexOf(element.type) >= 0
+    let isEditable = element.contentEditable === 'true'
+    if (isTextarea || isInput ||isEditable) {
+      return
+    }
     dialog.toggle()
   },
   'Alt': function () {
