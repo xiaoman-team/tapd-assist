@@ -41,6 +41,7 @@ chrome.extension.sendRequest({
 
 let menuLock = false
 let altDownAt
+let altDownTimeoutId
 let leftTreeClose
 const SHORTCUTS = {
   'Alt+Escape': function () {
@@ -133,6 +134,7 @@ const SHORTCUTS = {
     }
     let element1 = element[0]
     if (element1) {
+      tapdAssistUtils.showFlash('⬅ 跳转到上一页️...')
       element1.click()
     }
   },
@@ -144,6 +146,7 @@ const SHORTCUTS = {
     }
     let element1 = element[0]
     if (element1) {
+      tapdAssistUtils.showFlash('跳转到下一页️➡ ...')
       element1.click()
     }
   },
@@ -163,7 +166,17 @@ const SHORTCUTS = {
   },
   'Alt': function () {
     altDownAt = Date.now()
-    dialog.show()
+    if (altDownTimeoutId) {
+      clearTimeout(altDownTimeoutId)
+    }
+    altDownTimeoutId = setTimeout(function () {
+      if (altDownTimeoutId) {
+        clearTimeout(altDownTimeoutId)
+        altDownTimeoutId = undefined
+      }
+
+      dialog.show()
+    }, 1000)
     leftTreeClose = $('body').hasClass('left-tree-close')
     $('body').removeClass('left-tree-close')
   },
@@ -247,6 +260,10 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Alt') {
     dialog.hide()
+    if (altDownTimeoutId) {
+      clearTimeout(altDownTimeoutId)
+      altDownTimeoutId = undefined
+    }
 
     const QUICK_CLICK_THRESHOLD = 400
     let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
