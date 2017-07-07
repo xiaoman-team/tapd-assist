@@ -43,6 +43,12 @@ let menuLock = false
 let altDownAt
 let altDownTimeoutId
 let leftTreeClose
+let clearAltDownTimeout = () => {
+  if (altDownTimeoutId) {
+    clearTimeout(altDownTimeoutId)
+    altDownTimeoutId = undefined
+  }
+}
 const SHORTCUTS = {
   'Alt+Escape': function () {
     if (!$('body').hasClass('.left-tree-close')) {
@@ -166,19 +172,14 @@ const SHORTCUTS = {
   },
   'Alt': function () {
     altDownAt = Date.now()
-    if (altDownTimeoutId) {
-      clearTimeout(altDownTimeoutId)
-    }
+    clearAltDownTimeout()
     altDownTimeoutId = setTimeout(function () {
-      if (altDownTimeoutId) {
-        clearTimeout(altDownTimeoutId)
-        altDownTimeoutId = undefined
-      }
-
+      clearAltDownTimeout()
       dialog.show()
     }, 1000)
     leftTreeClose = $('body').hasClass('left-tree-close')
     $('body').removeClass('left-tree-close')
+    return 'alt-down'
   },
   'Alt+K': function () {
     chrome.storage.sync.get('shortcut', function (val) {
@@ -225,12 +226,17 @@ let executeShortcuts = function (shortcuts, e) {
 
   let handler = shortcutMap[downKeys]
   if (!handler) {
-    return
+    return {
+      match: false
+    }
   }
 
   if (typeof handler === 'function') {
-    handler(e, downKeys)
-    return
+    let result = handler(e, downKeys)
+    return {
+      match: true,
+      result
+    }
   }
   let target
   let description
@@ -244,26 +250,32 @@ let executeShortcuts = function (shortcuts, e) {
   let element = $(target)[0]
   if (!element) {
     console.warn('Invalid shortcut handler: document.getElementById empty', handler)
-    return
+    return {
+      match: true
+    }
   }
   element.click()
   if (description) {
     tapdAssistUtils.showFlash(description)
   }
+  return {
+    match: true,
+    result: true
+  }
 }
 
 document.addEventListener('keydown', function (e) {
-  executeShortcuts(SHORTCUTS, e)
-  executeShortcuts(PROJECT_SHORTCUTS, e)
+  let result = executeShortcuts(SHORTCUTS, e)
+  let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
+  if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
+    clearAltDownTimeout()
+  }
 })
 
 document.addEventListener('keyup', function (e) {
   if (e.key === 'Alt') {
     dialog.hide()
-    if (altDownTimeoutId) {
-      clearTimeout(altDownTimeoutId)
-      altDownTimeoutId = undefined
-    }
+    clearAltDownTimeout()
 
     const QUICK_CLICK_THRESHOLD = 400
     let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
