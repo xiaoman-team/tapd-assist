@@ -163,16 +163,19 @@ const SHORTCUTS = {
   'Alt+F': function (e) {
     let btn = $('.editor-btn[data-name=fullscreen]')[0]
     if (btn) {
+      e.preventDefault()
       btn.click()
       return
     }
     let ele = document.webkitFullscreenElement
     if (ele) {
+      e.preventDefault()
       document.webkitExitFullscreen()
       $(ele).removeClass('tapd-assist-fullscreen-element')
     } else {
       let ele = $('#General_div')[0]
       if (ele) {
+        e.preventDefault()
         ele.webkitRequestFullscreen()
         $(ele).addClass('tapd-assist-fullscreen-element')
       } else {
