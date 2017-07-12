@@ -156,9 +156,29 @@ const SHORTCUTS = {
       element1.click()
     }
   },
-  'Alt+F': function (e) {
+  'Alt+S': function (e) {
     e.preventDefault()
     $('#search-keyword').focus().select()
+  },
+  'Alt+F': function (e) {
+    let btn = $('.editor-btn[data-name=fullscreen]')[0]
+    if (btn) {
+      btn.click()
+      return
+    }
+    let ele = document.webkitFullscreenElement
+    if (ele) {
+      document.webkitExitFullscreen()
+      $(ele).removeClass('tapd-assist-fullscreen-element')
+    } else {
+      let ele = $('#General_div')[0]
+      if (ele) {
+        ele.webkitRequestFullscreen()
+        $(ele).addClass('tapd-assist-fullscreen-element')
+      } else {
+        console.warn('No element need to request fullscreen')
+      }
+    }
   },
   'Shift+Slash': function () {
     let element = document.activeElement

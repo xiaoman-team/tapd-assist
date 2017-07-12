@@ -195,3 +195,9 @@
   color: rgba(0,0,0,.57);
 }
 
+.tapd-assist-fullscreen-element {
+  overflow-x: auto;
+  overflow-y: auto;
+  width: 95%;
+  padding-left: 5% !important;
+}

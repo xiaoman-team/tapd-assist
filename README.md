@@ -22,7 +22,8 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * [Alt+N] open notification messages
   * [Alt+H/Alt+Left] left page
   * [Alt+L/Alt+Right] left page
-  * [Alt+F] search
+  * [Alt+S] search
+  * [Alt+F] fullscreen
   * [Shift+?] show help
   * [Ctrl+C/Cmd+C] copy feature/bug title and url
 
