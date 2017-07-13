@@ -1,6 +1,17 @@
+const randomStringChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
 let tapdAssistUtils = {
   isInsideExtension: function () {
     return typeof chrome.extension !== 'undefined'
+  },
+  generateRandomString: function (len = 8) {
+    let chars = []
+    for (let i = 0; i < len; i++) {
+      let index = Math.floor(Math.random() * randomStringChars.length)
+      let c = randomStringChars.charAt(index)
+      chars.push(c)
+    }
+    return chars.join('')
   },
   getProjectId: function getProjectId(url) {
     if (url === undefined) {
@@ -56,16 +67,21 @@ let tapdAssistUtils = {
     }
     window.TFL.tips.showFlash(prefix + text, keep, delay)
   },
-  injectScript: function (file, doc, parent) {
-    if (!doc) {
-      doc = document
-    }
-    if (!parent) {
+  injectScript: function (options = {}) {
+    let {
+      url,
+      content,
+      doc = document,
       parent = doc.body
-    }
+    } = options
     let script = doc.createElement('script')
     script.setAttribute('type', 'text/javascript')
-    script.setAttribute('src', file)
+    if (url) {
+      script.setAttribute('src', url)
+    }
+    if (content) {
+      script.textContent = content
+    }
     parent.appendChild(script)
   },
   toggleFullscreen: function (ele0) {

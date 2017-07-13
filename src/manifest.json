@@ -47,7 +47,6 @@
   ],
   "web_accessible_resources": [
     "utils.js",
-    "page_inject.js",
-    "page_loaded.js"
+    "page_inject.js"
   ]
 }

@@ -303,15 +303,7 @@ let ensureListenDocumentKeyEvents = function () {
     }
     doc.body.setAttribute('tapdAssistInitialized', 'yes')
 
-    window.addEventListener('message', function (e) {
-      if (!e.data) {
-        return
-      }
-      let {type, data} = e.data
-      if (type !== 'tapdAssistPageLoaded') {
-        return
-      }
-
+    let listen = function () {
       doc.addEventListener('keydown', function (e) {
         let result = executeShortcuts(SHORTCUTS, e)
         let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
@@ -335,12 +327,20 @@ let ensureListenDocumentKeyEvents = function () {
           }
         }
       })
-    })
-    tapdAssistUtils.injectScript(chrome.extension.getURL('/page_loaded.js'), doc)
+    }
+    if (!doc.body.childElementCount && options.waitContent) {
+      let id = setInterval(function () {
+        if (doc.body.childElementCount) {
+          clearInterval(id)
+          listen()
+        }
+      }, 200)
+    }
+    listen()
   }
   ensure(window, document)
   $('iframe').toArray().forEach(function (iframe) {
-    ensure(iframe.contentWindow, iframe.contentDocument)
+    ensure(iframe.contentWindow, iframe.contentDocument, {waitContent: true})
   })
 }
 
@@ -362,6 +362,8 @@ let scripts = [
   'page_inject.js'
 ]
 scripts.forEach(script => {
-  tapdAssistUtils.injectScript(chrome.extension.getURL('/' + script))
+  tapdAssistUtils.injectScript({
+    url: chrome.extension.getURL('/' + script)
+  })
 })
 
