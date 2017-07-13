@@ -10,7 +10,7 @@ $(function (e) {
 
     let {type, data} = e.data
     switch (type) {
-      case 'tryCopyTitle': {
+      case 'tapdAssistTryCopyTitle': {
         let selection = window.getSelection()
         let nothingSelected = !selection.toString()
         if (nothingSelected) {
@@ -22,7 +22,7 @@ $(function (e) {
         }
         break
       }
-      case 'showFlash': {
+      case 'tapdAssistShowFlash': {
         tapdAssistUtils.showFlash(data)
         break
       }

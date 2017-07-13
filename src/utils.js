@@ -34,7 +34,7 @@ let tapdAssistUtils = {
   showFlash: function (data) { // {text, keep, delay} or 'text'
     if (tapdAssistUtils.isInsideExtension()) {
       window.postMessage({
-        type: "showFlash",
+        type: "tapdAssistShowFlash",
         data: data
       }, "*")
       return
@@ -56,11 +56,17 @@ let tapdAssistUtils = {
     }
     window.TFL.tips.showFlash(prefix + text, keep, delay)
   },
-  injectScript: function (file) {
-    let script = document.createElement('script')
+  injectScript: function (file, doc, parent) {
+    if (!doc) {
+      doc = document
+    }
+    if (!parent) {
+      parent = doc.body
+    }
+    let script = doc.createElement('script')
     script.setAttribute('type', 'text/javascript')
     script.setAttribute('src', file)
-    document.body.appendChild(script)
+    parent.appendChild(script)
   },
   toggleFullscreen: function (ele0) {
     let ele = document.webkitFullscreenElement
@@ -225,5 +231,11 @@ let tapdAssistUtils = {
           tapdAssistUtils.toggleFullscreen(comment)
         })
     })
+  },
+  patchFullscreenButton: function () {
+    let ele = $('[data-name=fullscreen]')[0]
+    if (ele) {
+      ele.title = "全屏编辑(Alt+F)"
+    }
   }
 }

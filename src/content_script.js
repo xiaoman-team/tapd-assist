@@ -1,9 +1,6 @@
 tapdAssistUtils.watchFullscreen()
 tapdAssistUtils.patchComments()
-let fullscreen = $('[data-name=fullscreen]')[0]
-if (fullscreen) {
-  fullscreen.title = "全屏编辑(Alt+F)"
-}
+tapdAssistUtils.patchFullscreenButton()
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 
@@ -31,6 +28,12 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
     } else if (mutation.target.id === 'myprojects-list' && mutation.addedNodes.length) {
       PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
+    } else if (mutation.target.id === 'StoryDescriptionDiv' && mutation.addedNodes.length) {
+      tapdAssistUtils.patchFullscreenButton()
+      ensureListenDocumentKeyEvents()
+    } else if (mutation.target.id === 'BugDescriptionDiv' && mutation.addedNodes.length) {
+      tapdAssistUtils.patchFullscreenButton()
+      ensureListenDocumentKeyEvents()
     }
   })
 })
@@ -179,6 +182,7 @@ const SHORTCUTS = {
     $('#search-keyword').focus().select()
   },
   'Alt+F': function (e) {
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx temp 123', e.target)
     let btn = $('.editor-btn[data-name=fullscreen]')[0]
     if (btn) {
       e.preventDefault()
@@ -217,7 +221,7 @@ const SHORTCUTS = {
   },
   'Ctrl+C|Meta+C': function (e, keys) {
     window.postMessage({
-      type: "tryCopyTitle",
+      type: "tapdAssistTryCopyTitle",
       data: ""
     }, "*");
   }
@@ -293,34 +297,64 @@ let executeShortcuts = function (shortcuts, e) {
   }
 }
 
-let docs = [document].concat($('iframe').toArray().map(function (iframe) {
-  return iframe.contentDocument
-}))
-docs.forEach(function (doc) {
-  doc.addEventListener('keydown', function (e) {
-    let result = executeShortcuts(SHORTCUTS, e)
-    let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
-    if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
-      clearAltDownTimeout()
+let ensureListenDocumentKeyEvents = function () {
+  let ensure = function (win, doc, options = {}) {
+    if (doc.body.getAttribute('tapdAssistInitialized')) {
+      return
     }
-  })
+    doc.body.setAttribute('tapdAssistInitialized', 'yes')
 
-  doc.addEventListener('keyup', function (e) {
-    if (e.key === 'Alt') {
-      dialog.hide()
-      clearAltDownTimeout()
-
-      const QUICK_CLICK_THRESHOLD = 400
-      let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
-      if (quickAlt) {
-        $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
-      } else if (menuLock) {
-      } else {
-        $('body').addClass('left-tree-close minimenu')
+    window.addEventListener('message', function (e) {
+      if (!e.data) {
+        return
       }
+      let {type, data} = e.data
+      if (type !== 'tapdAssistPageLoaded') {
+        return
+      }
+
+      doc.addEventListener('keydown', function (e) {
+        let result = executeShortcuts(SHORTCUTS, e)
+        let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
+        if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
+          clearAltDownTimeout()
+        }
+      })
+
+      doc.addEventListener('keyup', function (e) {
+        if (e.key === 'Alt') {
+          dialog.hide()
+          clearAltDownTimeout()
+
+          const QUICK_CLICK_THRESHOLD = 400
+          let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
+          if (quickAlt) {
+            $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
+          } else if (menuLock) {
+          } else {
+            $('body').addClass('left-tree-close minimenu')
+          }
+        }
+      })
+    })
+    if (options.waitContent && !doc.body.childElementCount) {
+      let id = setInterval(function () {
+        if (doc.body.childElementCount) {
+          clearInterval(id)
+          tapdAssistUtils.injectScript(chrome.extension.getURL('/page_loaded.js'), doc)
+        }
+      }, 400)
+      return
     }
+    tapdAssistUtils.injectScript(chrome.extension.getURL('/page_loaded.js'), doc)
+  }
+  ensure(window, document)
+  $('iframe').toArray().forEach(function (iframe) {
+    ensure(iframe.contentWindow, iframe.contentDocument, {waitContent: false})
   })
-})
+}
+
+ensureListenDocumentKeyEvents()
 
 // bodyDOMObserver.disconnect()
 
