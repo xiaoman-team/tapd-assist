@@ -293,28 +293,33 @@ let executeShortcuts = function (shortcuts, e) {
   }
 }
 
-document.addEventListener('keydown', function (e) {
-  let result = executeShortcuts(SHORTCUTS, e)
-  let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
-  if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
-    clearAltDownTimeout()
-  }
-})
-
-document.addEventListener('keyup', function (e) {
-  if (e.key === 'Alt') {
-    dialog.hide()
-    clearAltDownTimeout()
-
-    const QUICK_CLICK_THRESHOLD = 400
-    let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
-    if (quickAlt) {
-      $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
-    } else if (menuLock) {
-    } else {
-      $('body').addClass('left-tree-close minimenu')
+let docs = [document].concat($('iframe').toArray().map(function (iframe) {
+  return iframe.contentDocument
+}))
+docs.forEach(function (doc) {
+  doc.addEventListener('keydown', function (e) {
+    let result = executeShortcuts(SHORTCUTS, e)
+    let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
+    if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
+      clearAltDownTimeout()
     }
-  }
+  })
+
+  doc.addEventListener('keyup', function (e) {
+    if (e.key === 'Alt') {
+      dialog.hide()
+      clearAltDownTimeout()
+
+      const QUICK_CLICK_THRESHOLD = 400
+      let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
+      if (quickAlt) {
+        $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
+      } else if (menuLock) {
+      } else {
+        $('body').addClass('left-tree-close minimenu')
+      }
+    }
+  })
 })
 
 // bodyDOMObserver.disconnect()
