@@ -1,12 +1,30 @@
+tapdAssistUtils.watchFullscreen()
+tapdAssistUtils.patchComments()
+let fullscreen = $('[data-name=fullscreen]')[0]
+if (fullscreen) {
+  fullscreen.title = "全屏编辑(Alt+F)"
+}
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 
 let bodyDOMObserver = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
     if (mutation.target.id === 'General_div' && mutation.addedNodes.length) {
-      let root = document.getElementById('description_div')
-      if (root) {
-        tapdAssistUtils.patchURLLink(root)
+      let tapdBase = $('#General_div .tapd-base')
+      if (tapdBase.length) {
+        tapdBase.prepend(`
+<a title="【TAPD助手】全屏(Alt+F)" class="fullscreen link-ico"
+  style="float: right; margin-left: 12px; margin-top: 2px">
+  <i class="font-editor font-editor-fullscreen"></i>
+</a>
+`)
+        tapdBase.find('.fullscreen').click(function () {
+          tapdAssistUtils.toggleFullscreen($('#General_div')[0])
+        })
+      }
+      let content = $('#description_div')[0]
+      if (content) {
+        tapdAssistUtils.patchURLLink(content)
       } else {
         console.warn('[tapd_assist] #description_div not found')
       }
@@ -167,20 +185,8 @@ const SHORTCUTS = {
       btn.click()
       return
     }
-    let ele = document.webkitFullscreenElement
-    if (ele) {
+    if (tapdAssistUtils.toggleFullscreen($('#General_div')[0])) {
       e.preventDefault()
-      document.webkitExitFullscreen()
-      $(ele).removeClass('tapd-assist-fullscreen-element')
-    } else {
-      let ele = $('#General_div')[0]
-      if (ele) {
-        e.preventDefault()
-        ele.webkitRequestFullscreen()
-        $(ele).addClass('tapd-assist-fullscreen-element')
-      } else {
-        console.warn('No element need to request fullscreen')
-      }
     }
   },
   'Shift+Slash': function () {

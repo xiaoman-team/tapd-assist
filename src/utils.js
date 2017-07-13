@@ -62,6 +62,32 @@ let tapdAssistUtils = {
     script.setAttribute('src', file)
     document.body.appendChild(script)
   },
+  toggleFullscreen: function (ele0) {
+    let ele = document.webkitFullscreenElement
+    if (ele) {
+      document.webkitExitFullscreen()
+      $(ele).removeClass('tapd-assist-fullscreen-element')
+      return true
+    }
+    ele = ele0
+    if (!ele) {
+      console.warn('No element need to request fullscreen')
+      return
+    }
+    ele.webkitRequestFullscreen()
+    $(ele).addClass('tapd-assist-fullscreen-element')
+    return true
+  },
+  watchFullscreen: function () {
+    document.addEventListener("webkitfullscreenchange", function( event ) {
+      if (!document.webkitIsFullScreen ) {
+        let ele = event.target
+        if (ele) {
+          $(ele).removeClass('tapd-assist-fullscreen-element')
+        }
+      }
+    });
+  },
   replaceLinkInText: function (node) {
     let text = node.data
     let splits = text.split(/[ \t\r\n]+/)
@@ -173,5 +199,31 @@ let tapdAssistUtils = {
       }
     }
     return shortcuts
+  },
+  patchComments: function () {
+    let root = document.getElementById('comments')
+    if (!root) {
+      return
+    }
+
+    let ele = $(root).find('.title span:last').append(`
+  <a class="fullscreen link-ico f12" title="【TAPD助手】全屏" style="margin-left: 12px">
+    <i class="font-editor font-editor-fullscreen"></i>
+  </a>
+`)
+    $(root).find('.fullscreen').click(function () {
+      tapdAssistUtils.toggleFullscreen(root)
+    })
+    $(root).find('.comment_content').toArray().forEach(function (comment) {
+      let parent = $(comment).find('.comment-info span:last')
+        parent.append(`
+<a title="【TAPD助手】全屏" class="fullscreen link-ico">
+  <i class="font-editor font-editor-fullscreen"></i>
+</a>
+`)
+        parent.find('.fullscreen').click(function () {
+          tapdAssistUtils.toggleFullscreen(comment)
+        })
+    })
   }
 }
