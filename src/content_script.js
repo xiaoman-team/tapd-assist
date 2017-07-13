@@ -182,7 +182,6 @@ const SHORTCUTS = {
     $('#search-keyword').focus().select()
   },
   'Alt+F': function (e) {
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxx temp 123', e.target)
     let btn = $('.editor-btn[data-name=fullscreen]')[0]
     if (btn) {
       e.preventDefault()
@@ -337,20 +336,11 @@ let ensureListenDocumentKeyEvents = function () {
         }
       })
     })
-    if (options.waitContent && !doc.body.childElementCount) {
-      let id = setInterval(function () {
-        if (doc.body.childElementCount) {
-          clearInterval(id)
-          tapdAssistUtils.injectScript(chrome.extension.getURL('/page_loaded.js'), doc)
-        }
-      }, 400)
-      return
-    }
     tapdAssistUtils.injectScript(chrome.extension.getURL('/page_loaded.js'), doc)
   }
   ensure(window, document)
   $('iframe').toArray().forEach(function (iframe) {
-    ensure(iframe.contentWindow, iframe.contentDocument, {waitContent: false})
+    ensure(iframe.contentWindow, iframe.contentDocument)
   })
 }
 
