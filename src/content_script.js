@@ -25,9 +25,15 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       } else {
         console.warn('[tapd_assist] #description_div not found')
       }
-      PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
+      let shortcuts = tapdAssistUtils.patchProjectList()
+      if (shortcuts) {
+        PROJECT_SHORTCUTS = shortcuts
+      }
     } else if (mutation.target.id === 'myprojects-list' && mutation.addedNodes.length) {
-      PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
+      let shortcuts = tapdAssistUtils.patchProjectList()
+      if (shortcuts) {
+        PROJECT_SHORTCUTS = shortcuts
+      }
     } else if (mutation.target.id === 'StoryDescriptionDiv' && mutation.addedNodes.length) {
       tapdAssistUtils.patchFullscreenButton()
       ensureListenDocumentKeyEvents()
