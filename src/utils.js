@@ -190,8 +190,30 @@ let tapdAssistUtils = {
       console.warn('[tapd_assist] #myprojects-list not found')
       return
     }
+    if (root.getAttribute('tapdAssistInitialized')) {
+      return
+    }
 
-    let projects = $(root).children('li')
+    let getProjectId = function (li) {
+      let a = $(li).find('a')[0]
+      if (a) {
+        return parseInt(tapdAssistUtils.getProjectId(a.href))
+      }
+      return 0
+    }
+    let projects = $(root).children('li').toArray().filter(function (li) {
+      return getProjectId(li)
+    }).sort(function (a, b) {
+      return getProjectId(b) - getProjectId(a)
+    })
+    if (projects.length) {
+      root.setAttribute('tapdAssistInitialized', 'yes')
+    }
+
+    projects.concat().reverse().forEach(function (ele) {
+      root.prepend(ele)
+    })
+
     let shortcuts = {}
     for (let i = 0; i < projects.length; i++) {
       let index = i + 1
