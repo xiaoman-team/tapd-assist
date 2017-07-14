@@ -104,6 +104,20 @@ const SHORTCUTS = {
     tapdAssistUtils.showFlash('正在跳转团队成员...')
     window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
   },
+  'Alt+E': function () {
+    let ele = document.getElementById('edit_story_btn')
+    if (ele) {
+      tapdAssistUtils.showFlash('正在跳转需求编辑...')
+      ele.click()
+      return
+    }
+    ele = document.getElementById('edit_bug')
+    if (ele) {
+      tapdAssistUtils.showFlash('正在跳转缺陷编辑...')
+      ele.click()
+      return
+    }
+  },
   'Alt+R': function () {
     let projectId = tapdAssistUtils.getProjectId()
     if (!projectId) {
