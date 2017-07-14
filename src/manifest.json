@@ -2,7 +2,7 @@
   "name": "TAPD助手",
   "manifest_version": 2,
   "description": "TAPD助手",
-  "version": "0.1.19",
+  "version": "0.1.20",
   "background": {
     "scripts":[
       "jquery.js",
