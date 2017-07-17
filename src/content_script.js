@@ -243,6 +243,12 @@ const SHORTCUTS = {
       type: "tapdAssistTryCopyTitle",
       data: ""
     }, "*");
+  },
+  'Meta+Ctrl+C': function (e, keys) {
+    window.postMessage({
+      type: "tapdAssistTryCopyTitle2",
+      data: ""
+    }, "*");
   }
 }
 

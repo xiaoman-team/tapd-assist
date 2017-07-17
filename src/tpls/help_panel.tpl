@@ -24,6 +24,12 @@
             <span class="shortcut-description">复制需求/缺陷标题链接</span>
           </div>
           <div class="quickhelp">
+            <span class="shortcut-key">
+              <kbd>Cmd+Ctrl+C</kbd>
+            </span>
+            <span class="shortcut-description">复制需求/缺陷标题(Commit风格)</span>
+          </div>
+          <div class="quickhelp">
             <span class="shortcut-key"><kbd>Alt+E</kbd></span>
             <span class="shortcut-description">编辑需求/缺陷</span>
           </div>
