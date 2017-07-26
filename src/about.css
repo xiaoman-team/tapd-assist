@@ -1,0 +1,32 @@
+.content {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-direction: column;
+  padding: 32px 0;
+}
+
+.content img {
+  max-width: 160px;
+}
+
+.content .team-name {
+  font-size: 24px;
+  padding: 10px 0;
+  color: #666;
+}
+
+.content .extension {
+  font-size: 16px;
+  padding: 6px 0;
+}
+
+.content .join {
+  font-size: 16px;
+  padding: 6px 0;
+}
+
+.content .join-lg {
+  font-size: 12px;
+  padding: 6px 0;
+}

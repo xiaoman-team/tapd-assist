@@ -1,15 +1,35 @@
 .ta-popup {
-  font-size: 14px;
   -webkit-user-select: none;
-  padding: 0;
   margin: 0;
-  width: 300px;
+  width: 140px;
   position: relative;
-  overflow: hidden
+  overflow: hidden;
+  cursor: default;
+  border: none;
 }
+
+.ta-popup .title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #666;
+  padding: 10px 20px;
+}
+
 .ta-fn-list {
   list-style: none;
+  padding: 0;
+  margin: 0;
 }
 .ta-fn-list li {
-  cursor: pointer;
+  cursor: default;
+  color: #333;
+  font-size: 14px;
+  padding: 12px 20px;
+}
+.ta-fn-list li:not(:first-child) {
+  border-top: 1px solid #ccc;
+}
+
+.ta-fn-list li:hover {
+  background: #d8e5fc;
 }
