@@ -22,6 +22,7 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       let content = $('#description_div')[0]
       if (content) {
         tapdAssistUtils.patchURLLink(content)
+        tapdAssistUtils.patchFullscreenImage(content)
       } else {
         console.warn('[tapd_assist] #description_div not found')
       }

@@ -184,6 +184,20 @@ let tapdAssistUtils = {
 
     detectAndReplaceLink(root)
   },
+  patchFullscreenImage: function (root) {
+    let images = $(root).find('img')
+    images.toArray().forEach(img => {
+      let src = img.getAttribute('original_src')
+      if (!src) {
+        console.warn('image original src not found', img)
+        return
+      }
+      let img1 = document.createElement('img')
+      img1.setAttribute('class', 'original')
+      img1.setAttribute('src', src)
+      $(img).after(img1)
+    })
+  },
   patchProjectList: function () {
     let root = document.getElementById('myprojects-list')
     if (!root) {

@@ -195,9 +195,21 @@
   color: rgba(0,0,0,.57);
 }
 
+#General_div img.original {
+  display: none;
+}
+
 .tapd-assist-fullscreen-element {
   overflow-x: auto;
   overflow-y: auto;
   width: 95%;
   padding-left: 5% !important;
+}
+
+.tapd-assist-fullscreen-element img[original_src] {
+  display: none;
+}
+
+.tapd-assist-fullscreen-element img.original {
+  display: block !important;
 }
