@@ -35,5 +35,8 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 
 ### 路线图Roadmap:
 
-1. 配置页面，可以配置触发键为Alt或者Ctrl或者Cmd等。
+* 配置页面，可以配置触发键为Alt或者Ctrl或者Cmd等。
+  * [官方文档](https://developer.chrome.com/extensions/options) `chrome.storage.sync.set|get`
+  * 产品稿 <http://dev01.xiaoman.cc:8000/katyusha/#g=1&p=config>
+  
 
