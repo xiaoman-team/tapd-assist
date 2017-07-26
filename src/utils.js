@@ -96,6 +96,7 @@ let tapdAssistUtils = {
       console.warn('No element need to request fullscreen')
       return
     }
+    tapdAssistUtils.patchFullscreenImage(ele)
     ele.webkitRequestFullscreen()
     $(ele).addClass('tapd-assist-fullscreen-element')
     return true
@@ -185,8 +186,11 @@ let tapdAssistUtils = {
     detectAndReplaceLink(root)
   },
   patchFullscreenImage: function (root) {
-    let images = $(root).find('img')
+    let images = $(root).find('img[original_src]')
     images.toArray().forEach(img => {
+      if (img.getAttribute('tapd-assist-shadowed')) {
+        return
+      }
       let src = img.getAttribute('original_src')
       if (!src) {
         console.warn('image original src not found', img)
@@ -196,6 +200,7 @@ let tapdAssistUtils = {
       img1.setAttribute('class', 'original')
       img1.setAttribute('src', src)
       $(img).after(img1)
+      img.setAttribute('tapd-assist-shadowed', 'yes')
     })
   },
   patchProjectList: function () {
