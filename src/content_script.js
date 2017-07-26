@@ -70,7 +70,7 @@ let menuLock = false
 let altDownAt
 let altDownTimeoutId
 let leftTreeClose
-let clearAltDownTimeout = () => {
+let clearAltDownTimeout = function () {
   if (altDownTimeoutId) {
     clearTimeout(altDownTimeoutId)
     altDownTimeoutId = undefined
@@ -134,7 +134,9 @@ const SHORTCUTS = {
       let hrefs = $(htmlDoc)
         .find('#custom-statistics ul.custom-statistic-list li a')
         .toArray()
-        .map(a => a.getAttribute('href'))
+        .map(function (a) {
+          return a.getAttribute('href')
+        })
       let anchor = hrefs[0]
       if (anchor) {
         window.location.href = anchor
@@ -161,8 +163,12 @@ const SHORTCUTS = {
       let hrefs = $(htmlDoc)
         .find('.tbox-content ul li a')
         .toArray()
-        .map(a => a.getAttribute('href'))
-        .filter(href => href.indexOf('/bugtrace/bugreports/stat_general/general/customreport-') >= 0)
+        .map(function (a) {
+          return a.getAttribute('href')
+        })
+        .filter(function (href) {
+          return href.indexOf('/bugtrace/bugreports/stat_general/general/customreport-') >= 0
+        })
       let anchor = hrefs[0]
       if (anchor) {
         window.location.href = anchor
@@ -387,7 +393,7 @@ let scripts = [
   'utils.js',
   'page_inject.js'
 ]
-scripts.forEach(script => {
+scripts.forEach(function (script) {
   tapdAssistUtils.injectScript({
     url: chrome.extension.getURL('/' + script)
   })

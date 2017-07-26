@@ -187,7 +187,7 @@ let tapdAssistUtils = {
   },
   patchFullscreenImage: function (root) {
     let images = $(root).find('img[original_src]')
-    images.toArray().forEach(img => {
+    images.toArray().forEach(function (img) {
       if (img.getAttribute('tapd-assist-shadowed')) {
         return
       }
