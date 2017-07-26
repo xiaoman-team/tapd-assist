@@ -1,3 +1,6 @@
+body {
+  background: #fcfcfc;
+}
 .content {
   display: flex;
   align-items: center;
@@ -26,7 +29,6 @@
   padding: 6px 0;
 }
 
-.content .join-lg {
+.content .join .join-lg {
   font-size: 12px;
-  padding: 6px 0;
 }
