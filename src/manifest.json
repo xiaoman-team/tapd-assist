@@ -23,6 +23,7 @@
     "default_title": "TAPD助手",
     "default_popup": "popup.html"
   },
+  "options_page": "options.html",
   "permissions": [
     "storage",
     "tabs",
