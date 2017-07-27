@@ -25,7 +25,7 @@
           </div>
           <div class="quickhelp">
             <span class="shortcut-key">
-              <kbd>Cmd+Ctrl+C</kbd>
+              <kbd>Alt+C</kbd>
             </span>
             <span class="shortcut-description">复制需求/缺陷标题(Commit风格)</span>
           </div>
@@ -70,10 +70,6 @@
           <div class="quickhelp">
             <span class="shortcut-key"><kbd>Alt+N</kbd></span>
             <span class="shortcut-description">打开消息中心</span>
-          </div>
-          <div class="quickhelp">
-            <span class="shortcut-key"><kbd>Alt+C</kbd></span>
-            <span class="shortcut-description">创建项目</span>
           </div>
           <div class="quickhelp">
             <span class="shortcut-key"><kbd>Alt+M</kbd></span>

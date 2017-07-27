@@ -13,7 +13,6 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 * Shortcuts
   * [Alt+Esc] toggle project list
   * [Alt+Num] Num=1,2,3,4..., switch to project *Num*
-  * [Alt+C] create project
   * [Alt+M] project members
   * [Alt+R] newest requirements report or do nothing
   * [Alt+B] newest customized bug report or bug/dealer report
@@ -26,6 +25,7 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * [Alt+F] fullscreen
   * [Shift+?] show help
   * [Ctrl+C/Cmd+C] copy feature/bug title and url
+  * [Alt+C] copy feature/bug id and title
 
 ### TODO
 

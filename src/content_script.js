@@ -82,10 +82,6 @@ const SHORTCUTS = {
       menuLock = true
     }
   },
-  'Alt+C': {
-    target: '#create-project',
-    description: '创建项目...'
-  },
   'Alt+W': {
     target: '#top_nav_worktable',
     description: '正在跳转工作台...'
@@ -250,7 +246,7 @@ const SHORTCUTS = {
       data: ""
     }, "*");
   },
-  'Meta+Ctrl+C': function (e, keys) {
+  'Alt+C': function (e, keys) {
     window.postMessage({
       type: "tapdAssistTryCopyTitle2",
       data: ""
