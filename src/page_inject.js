@@ -26,14 +26,16 @@ $(function (e) {
         let selection = window.getSelection()
         let nothingSelected = !selection.toString()
         if (nothingSelected) {
-          let title = $('.subject_title')
-          let text = '#' + title.find('.title-id').text() + ' ' + title.find('.editable-value').text()
-          let btn = title.find('.tapdAssistTryCopyTitle2')[0]
+          let titleEle = $('.subject_title')
+          let id = titleEle.find('.title-id').text().trim()
+          let title = titleEle.find('.editable-value').text().trim()
+          let text = `#${id} ${title}`
+          let btn = titleEle.find('.tapdAssistTryCopyTitle2')[0]
           if (!btn) {
-            title.append(`
+            titleEle.append(`
 <div class="clipboard-btn tapdAssistTryCopyTitle2" data-clipboard-text="???">
 </div>`)
-            btn = title.find('.tapdAssistTryCopyTitle2')[0]
+            btn = titleEle.find('.tapdAssistTryCopyTitle2')[0]
           }
           btn.setAttribute('data-clipboard-text', text)
           btn.click()
