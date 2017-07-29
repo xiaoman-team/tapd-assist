@@ -1,5 +1,6 @@
 tapdAssistUtils.watchFullscreen()
 tapdAssistUtils.patchComments()
+tapdAssistUtils.patchFullscreenEditButton()
 tapdAssistUtils.patchFullscreenButton()
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
@@ -7,18 +8,7 @@ let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 let bodyDOMObserver = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
     if (mutation.target.id === 'General_div' && mutation.addedNodes.length) {
-      let tapdBase = $('#General_div .tapd-base')
-      if (tapdBase.length) {
-        tapdBase.prepend(`
-<a title="【TAPD助手】全屏(Alt+F)" class="fullscreen link-ico"
-  style="float: right; margin-left: 12px; margin-top: 2px">
-  <i class="font-editor font-editor-fullscreen"></i>
-</a>
-`)
-        tapdBase.find('.fullscreen').click(function () {
-          tapdAssistUtils.toggleFullscreen($('#General_div')[0])
-        })
-      }
+      tapdAssistUtils.patchFullscreenButton()
       let content = $('#description_div')[0]
       if (content) {
         tapdAssistUtils.patchURLLink(content)
@@ -251,7 +241,21 @@ const SHORTCUTS = {
       type: "tapdAssistTryCopyTitle2",
       data: ""
     }, "*");
-  }
+  },
+  'Alt+Minus': function (e, keys) {
+    let ele = document.webkitFullscreenElement
+    if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
+      ele = undefined
+    }
+    tapdAssistUtils.changeFullscreenZoom(-1, ele)
+  },
+  'Alt+Equal': function (e, keys) {
+    let ele = document.webkitFullscreenElement
+    if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
+      ele = undefined
+    }
+    tapdAssistUtils.changeFullscreenZoom(1, ele)
+  },
 }
 
 let executeShortcuts = function (shortcuts, e) {

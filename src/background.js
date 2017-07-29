@@ -1,5 +1,5 @@
 
-chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
+chrome.extension.onMessage.addListener(function (message, sender, sendResponse) {
   switch (message.type) {
     case 'getTabId': {
       sendResponse({ tabId: sender.tab.id })
@@ -19,7 +19,7 @@ chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
   }
 })
 
-chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+chrome.extension.onRequest.addListener(function (request, sender, sendResponse) {
   switch (request.cmd) {
     case 'readFile': {
       $.get(request.url, function (data) {

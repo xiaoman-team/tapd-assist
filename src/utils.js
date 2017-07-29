@@ -96,17 +96,26 @@ let tapdAssistUtils = {
       console.warn('No element need to request fullscreen')
       return
     }
+    tapdAssistUtils.patchZoom(ele)
     tapdAssistUtils.patchFullscreenImage(ele)
     ele.webkitRequestFullscreen()
     $(ele).addClass('tapd-assist-fullscreen-element')
     return true
   },
   watchFullscreen: function () {
-    document.addEventListener("webkitfullscreenchange", function( event ) {
-      if (!document.webkitIsFullScreen ) {
-        let ele = event.target
+    document.addEventListener("webkitfullscreenchange", function ( event ) {
+      let ele = event.target
+      if (document.webkitIsFullScreen ) {
+        if ($(ele).hasClass('tapd-assist-fullscreen-element')) {
+          chrome.storage.local.get('fullscreen-zoom', function (data) {
+            let {'fullscreen-zoom': value} = data
+            tapdAssistUtils.setFullscreenZoom(ele, parseFloat(value) || 1)
+          })
+        }
+      } else {
         if (ele) {
           $(ele).removeClass('tapd-assist-fullscreen-element')
+          $(ele).css('zoom', 1)
         }
       }
     });
@@ -185,10 +194,34 @@ let tapdAssistUtils = {
 
     detectAndReplaceLink(root)
   },
+  patchZoom: function (ele) {
+    if (ele.getAttribute('tapd-assist-zoom')) {
+      return
+    }
+    $(ele).prepend(`
+<div class="tapd-assist-zoom">
+  <a title="【TAPD助手】放大(Alt+)" class="tapd-assist-zoom-in"
+    style="float: right; margin-left: 12px; margin-top: 2px">
+    <i class="ico-plus-b"></i>
+  </a>
+  <a title="【TAPD助手】缩小(Alt-)" class="tapd-assist-zoom-out"
+    style="float: right; margin-left: 12px; margin-top: 2px">
+    <i class="ico-minus-b"></i>
+  </a>
+</div>
+`)
+    $(ele).find('.tapd-assist-zoom-in').click(function () {
+      tapdAssistUtils.changeFullscreenZoom(1, ele)
+    })
+    $(ele).find('.tapd-assist-zoom-out').click(function () {
+      tapdAssistUtils.changeFullscreenZoom(-1, ele)
+    })
+    ele.setAttribute('tapd-assist-zoom', 'yes')
+  },
   patchFullscreenImage: function (root) {
     let images = $(root).find('img[original_src]')
     images.toArray().forEach(function (img) {
-      if (img.getAttribute('tapd-assist-shadowed')) {
+      if (img.getAttribute('tapd-assist-image-original-mirror')) {
         return
       }
       let src = img.getAttribute('original_src')
@@ -197,10 +230,10 @@ let tapdAssistUtils = {
         return
       }
       let img1 = document.createElement('img')
-      img1.setAttribute('class', 'original')
+      img1.setAttribute('class', 'tapd-assist-original')
       img1.setAttribute('src', src)
       $(img).after(img1)
-      img.setAttribute('tapd-assist-shadowed', 'yes')
+      img.setAttribute('tapd-assist-image-original-mirror', 'yes')
     })
   },
   patchProjectList: function () {
@@ -289,10 +322,73 @@ let tapdAssistUtils = {
         })
     })
   },
-  patchFullscreenButton: function () {
+  patchFullscreenEditButton: function () {
     let ele = $('[data-name=fullscreen]')[0]
     if (ele) {
       ele.title = "全屏编辑(Alt+F)"
     }
+  },
+  patchFullscreenButton: function () {
+    let tapdBase = $('#General_div .tapd-base')
+    if (tapdBase.length && tapdBase.find('.fullscreen').length === 0) {
+      tapdBase.prepend(`
+<a title="【TAPD助手】全屏(Alt+F)" class="fullscreen link-ico"
+  style="float: right; margin-left: 12px; margin-top: 2px">
+  <i class="font-editor font-editor-fullscreen"></i>
+</a>
+`)
+      tapdBase.find('.fullscreen').click(function () {
+        tapdAssistUtils.toggleFullscreen($('#General_div')[0])
+      })
+    }
+  },
+  setFullscreenZoom: function (ele, zoom) {
+    const buttonScale = 1.5
+    $(ele).css('zoom', zoom)
+    $(ele).find('.tapd-assist-zoom').css('zoom', buttonScale/zoom)
+  },
+  changeFullscreenZoom: function (delta, ele) {
+    const zooms = [
+      '0.25',
+      '0.33',
+      '0.5',
+      '0.67',
+      '0.75',
+      '0.8',
+      '0.9',
+      '1.1',
+      '1.25',
+      '1.5',
+      '1.75',
+      '2'
+      // '2.5',
+      // '3',
+      // '4',
+      // '5'
+    ]
+    chrome.storage.local.get('fullscreen-zoom', function (data) {
+      let {'fullscreen-zoom': value} = data
+      let index = zooms.indexOf(value)
+      if (index < 0) {
+        index = 0
+      }
+      index += delta
+      if (index < 0) {
+        tapdAssistUtils.showFlash('已达最小尺寸')
+        return
+      }
+      if (index >= zooms.length) {
+        tapdAssistUtils.showFlash('已达最大尺寸')
+        return
+      }
+      let zoom = zooms[index]
+      chrome.storage.local.set({'fullscreen-zoom': zoom}, function () {
+        let zoomValue = parseFloat(zoom)
+        if (ele) {
+          tapdAssistUtils.setFullscreenZoom(ele, zoomValue)
+        }
+        tapdAssistUtils.showFlash(`${Math.round(zoomValue * 100)}%`)
+      })
+    });
   }
 }

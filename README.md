@@ -39,9 +39,4 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
   * [官方文档](https://developer.chrome.com/extensions/options) `chrome.storage.sync.set|get`
   * 产品稿 <http://dev01.xiaoman.cc:8000/katyusha/#g=1&p=config>
 
-* fullscreen模式支持自定义zoom
-  * 在fullscreen下，点击+/-号设置element的zoom，同时存储起来
-  * 退出fullscreen，清除zoom
-  * 再次启用fullscreen的时候，会再次设置zoom
-
 

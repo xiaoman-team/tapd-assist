@@ -50,6 +50,10 @@
             <span class="shortcut-description">最近的自定义缺陷报表，如果不存在，显示缺陷/处理人报表</span>
           </div>
           <div class="quickhelp">
+            <span class="shortcut-key"><kbd>Alt+/-</kbd></span>
+            <span class="shortcut-description">缩放全屏元素</span>
+          </div>
+          <div class="quickhelp">
             <span class="shortcut-key">
               <kbd>Alt+←</kbd>
               <kbd>Alt+H</kbd>
