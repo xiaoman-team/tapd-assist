@@ -2,6 +2,7 @@ tapdAssistUtils.watchFullscreen()
 tapdAssistUtils.patchComments()
 tapdAssistUtils.patchFullscreenEditButton()
 tapdAssistUtils.patchFullscreenButton()
+tapdAssistUtils.patchEditButton()
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 
@@ -90,18 +91,21 @@ const SHORTCUTS = {
     tapdAssistUtils.showFlash('正在跳转团队成员...')
     window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
   },
-  'Alt+E': function () {
-    let ele = document.getElementById('edit_story_btn')
-    if (ele) {
-      tapdAssistUtils.showFlash('正在跳转需求编辑...')
-      ele.click()
-      return
+  'Alt+E': function (e) {
+    let buttons = {
+      '#edit_story_btn': '正在跳转需求编辑...',
+      '#edit_bug': '正在跳转缺陷编辑...',
+      '#btn_cancel_edit': '正在退出需求编辑...',
+      '#id-tapd-toolbar #cancle': '正在退出缺陷编辑...'
     }
-    ele = document.getElementById('edit_bug')
-    if (ele) {
-      tapdAssistUtils.showFlash('正在跳转缺陷编辑...')
-      ele.click()
-      return
+    for (let key in buttons) {
+      let text = buttons[key]
+      let ele = $(key)[0]
+      if (ele) {
+        tapdAssistUtils.showFlash(text)
+        ele.click()
+        return
+      }
     }
   },
   'Alt+R': function () {
@@ -313,7 +317,7 @@ let executeShortcuts = function (shortcuts, e) {
   }
   let element = $(target)[0]
   if (!element) {
-    console.warn('Invalid shortcut handler: document.getElementById empty', handler)
+    console.warn('Invalid shortcut handler: document.getElementById empty', target, handler)
     return {
       match: true
     }

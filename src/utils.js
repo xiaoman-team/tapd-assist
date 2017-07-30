@@ -1,6 +1,7 @@
 const randomStringChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
 let tapdAssistUtils = {
+  namePrefix: '【TAPD助手】',
   isInsideExtension: function () {
     return typeof chrome.extension !== 'undefined'
   },
@@ -53,7 +54,7 @@ let tapdAssistUtils = {
     let text
     let keep = true
     let delay = 3000
-    let prefix = '【TAPD助手】'
+    let prefix = tapdAssistUtils.namePrefix
     if (typeof data === 'string') {
       text = data
     } else {
@@ -200,11 +201,11 @@ let tapdAssistUtils = {
     }
     $(ele).prepend(`
 <div class="tapd-assist-zoom">
-  <a title="【TAPD助手】放大(Alt+)" class="tapd-assist-zoom-in"
+  <a title="${tapdAssistUtils.namePrefix}放大(Alt+)" class="tapd-assist-zoom-in"
     style="float: right; margin-left: 12px; margin-top: 2px">
     <i class="ico-plus-b"></i>
   </a>
-  <a title="【TAPD助手】缩小(Alt-)" class="tapd-assist-zoom-out"
+  <a title="${tapdAssistUtils.namePrefix}缩小(Alt-)" class="tapd-assist-zoom-out"
     style="float: right; margin-left: 12px; margin-top: 2px">
     <i class="ico-minus-b"></i>
   </a>
@@ -237,7 +238,7 @@ let tapdAssistUtils = {
     })
   },
   patchProjectList: function () {
-    let root = document.getElementById('myprojects-list')
+    let root = $('myprojects-list')[0]
     if (!root) {
       console.warn('[tapd_assist] #myprojects-list not found')
       return
@@ -297,13 +298,13 @@ let tapdAssistUtils = {
     return shortcuts
   },
   patchComments: function () {
-    let root = document.getElementById('comments')
+    let root = $('#comments')[0]
     if (!root) {
       return
     }
 
     let ele = $(root).find('.title span:last').append(`
-  <a class="fullscreen link-ico f12" title="【TAPD助手】全屏" style="margin-left: 12px">
+  <a class="fullscreen link-ico f12" title="${tapdAssistUtils.namePrefix}全屏" style="margin-left: 12px">
     <i class="font-editor font-editor-fullscreen"></i>
   </a>
 `)
@@ -313,7 +314,7 @@ let tapdAssistUtils = {
     $(root).find('.comment_content').toArray().forEach(function (comment) {
       let parent = $(comment).find('.comment-info span:last')
         parent.append(`
-<a title="【TAPD助手】全屏" class="fullscreen link-ico">
+<a title="${tapdAssistUtils.namePrefix}全屏" class="fullscreen link-ico">
   <i class="font-editor font-editor-fullscreen"></i>
 </a>
 `)
@@ -321,6 +322,18 @@ let tapdAssistUtils = {
           tapdAssistUtils.toggleFullscreen(comment)
         })
     })
+  },
+  patchEditButton: function () {
+    let buttons = {
+      '#edit_story_btn': '编辑需求',
+      '#edit_bug': '编辑缺陷',
+      '#btn_cancel_edit': '退出需求编辑',
+      '#id-tapd-toolbar #cancle': '退出缺陷编辑'
+    }
+    for (let key in buttons) {
+      let text = buttons[key]
+      $(key).prop('title', `${tapdAssistUtils.namePrefix}${text}(Alt+E)`)
+    }
   },
   patchFullscreenEditButton: function () {
     let ele = $('[data-name=fullscreen]')[0]
@@ -332,7 +345,7 @@ let tapdAssistUtils = {
     let tapdBase = $('#General_div .tapd-base')
     if (tapdBase.length && tapdBase.find('.fullscreen').length === 0) {
       tapdBase.prepend(`
-<a title="【TAPD助手】全屏(Alt+F)" class="fullscreen link-ico"
+<a title="${tapdAssistUtils.namePrefix}全屏(Alt+F)" class="fullscreen link-ico"
   style="float: right; margin-left: 12px; margin-top: 2px">
   <i class="font-editor font-editor-fullscreen"></i>
 </a>

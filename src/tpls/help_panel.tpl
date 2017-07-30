@@ -31,7 +31,7 @@
           </div>
           <div class="quickhelp">
             <span class="shortcut-key"><kbd>Alt+E</kbd></span>
-            <span class="shortcut-description">编辑需求/缺陷</span>
+            <span class="shortcut-description">编辑需求/缺陷，或退出编辑</span>
           </div>
           <div class="quickhelp">
             <span class="shortcut-key"><kbd>Alt+S</kbd></span>
