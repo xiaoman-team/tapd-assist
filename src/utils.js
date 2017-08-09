@@ -238,7 +238,7 @@ let tapdAssistUtils = {
     })
   },
   patchProjectList: function () {
-    let root = $('myprojects-list')[0]
+    let root = $('#myprojects-list')[0]
     if (!root) {
       console.warn('[tapd_assist] #myprojects-list not found')
       return
@@ -246,6 +246,7 @@ let tapdAssistUtils = {
     if (root.getAttribute('tapdAssistInitialized')) {
       return
     }
+    console.warn('[tapd_assist] #myprojects-list patched')
 
     let getProjectId = function (li) {
       let a = $(li).find('a')[0]
