@@ -246,7 +246,7 @@ let tapdAssistUtils = {
     if (root.getAttribute('tapdAssistInitialized')) {
       return
     }
-    console.warn('[tapd_assist] #myprojects-list patched')
+    // console.info('[tapd_assist] #myprojects-list patched')
 
     let getProjectId = function (li) {
       let a = $(li).find('a')[0]
