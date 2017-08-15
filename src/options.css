@@ -1,0 +1,94 @@
+body {
+    display: flex;
+}
+
+.content {
+    margin: 30px auto;
+}
+
+h2 {
+    border-bottom: 1px solid #000000;
+    width: 480px;
+    padding-bottom: 10px;
+}
+
+.option {
+    margin: 20px 0px;
+}
+
+.option>span {
+    display: inline-block;
+    width: 160px;
+}
+
+select {
+    width: 160px;
+    cursor: pointer;
+    outline: none;
+}
+
+.desc {
+    margin: 10px 0px;
+    font-size: 12px;
+    color: #cccccc;
+}
+
+.desc p {
+    margin: 0px;
+}
+
+table {
+    width: 480px;
+    margin-bottom: 20px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+td {
+    text-align: center;
+    padding: 5;
+}
+
+tbody input {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    border: 0;
+}
+
+tbody input:focus {
+    cursor: auto;
+}
+
+button {
+    width: 80px;
+    height: 32px;
+    line-height: 32px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    border: none;
+    margin-right: 40px;
+    cursor: pointer;
+}
+
+#save {
+    background-color: #39a1f4;
+    color: #ffffff;
+}
+
+.status {
+    position: absolute;
+    margin: 0 auto;
+}
+
+#status {
+    position: fixed;
+    top: 20px;
+    left: 365px;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 3px;
+}
