@@ -42,12 +42,14 @@
       "js": [
         "jquery.js",
         "utils.js",
+        "tapdOptions.js",
         "content_script.js"
       ]
     }
   ],
   "web_accessible_resources": [
     "utils.js",
+    "tapdOptions.js",
     "page_inject.js"
   ]
 }

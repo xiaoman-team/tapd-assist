@@ -286,14 +286,18 @@ let tapdAssistUtils = {
       if (anchor) {
         let name = anchor.title
         anchor.setAttribute('project-index', i + 1)
-        shortcuts['Alt+' + index] = function () {
-          if (name) {
-            tapdAssistUtils.showFlash('正在跳转到' + name + '...')
+        tapdAssistOption.getShortcuts().then(function(data){
+          let ProjectDriver = data.get('projectDriver')
+          shortcuts[ProjectDriver + '+' + index] = function () {
+            if (name) {
+              tapdAssistUtils.showFlash('正在跳转到' + name + '...')
+            }
+            anchor.click()
+            span.textContent = '\u2713'
+            li.style.backgroundColor = '#303236'
           }
-          anchor.click()
-          span.textContent = '\u2713'
-          li.style.backgroundColor = '#303236'
-        }
+        })
+
       }
     }
     return shortcuts

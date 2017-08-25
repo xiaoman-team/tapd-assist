@@ -48,7 +48,7 @@ chrome.extension.sendRequest({
   url: chrome.extension.getURL('tpls/help_panel.tpl'),
 }, function (data) {
   let div = $('<div />')
-  div.html(data)       
+  div.html(data)
   dialog = div.find('#tapdAssistHelpPanel')
   dialog.hide()
   dialog.on('click.closeModal', '[data-dismiss="modal"]', function () {
@@ -67,200 +67,238 @@ let clearAltDownTimeout = function () {
     altDownTimeoutId = undefined
   }
 }
-const SHORTCUTS = {
-  'Alt+Escape': function () {
-    if (!$('body').hasClass('.left-tree-close')) {
-      menuLock = true
+let transform = (key) => {
+  return key.split('+').map(function (split) {
+    let str = split;
+    switch (split) {
+      case '?':
+        str = 'Slash'
+        break
+      case '+':
+        str = 'Equal'
+        break
+      case '-':
+        str = 'Minus'
+        break
+      default :
     }
-  },
-  'Alt+W': {
-    target: '#top_nav_worktable',
-    description: '正在跳转工作台...'
-  },
-  'Alt+N': {
-    target: '#top_nav_worktable_msg',
-    description: '正在跳转消息页面...'
-  },
-  'Alt+M': function () {
-    let projectId = tapdAssistUtils.getProjectId()
-    if (!projectId) {
-      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
-      return
-    }
+    return str;
+  }).sort().join('+');
+}
+let SHORTCUTS
+tapdAssistOption.getShortcuts().then(function (data) {
+  let driver = data.get('driver')
+  let workBench = data.get('open_workbench')
+  let message = data.get('open_message')
+  let memberList = data.get('member_list')
+  let editRequireBug = data.get('edit_require')
+  let requireReport = data.get('recent_require_report')
+  let bugReport = data.get('recent_bug_report')
+  let prevPage = data.get('prev_page')
+  let nextPage = data.get('next_page')
+  let search = data.get('search')
+  let createProject = data.get('create_project')
+  let fullScreen = data.get('full_screen')
+  let copyTitleLink = data.get('copy_title_link')
+  let copyTitle = data.get('copy_title')
+  let help = transform(data.get('help'))
+  let zoomIn = transform(data.get('zoom_in'))
+  let zoomOut = transform(data.get('zoom_out'))
+  console.log(driver)
+  console.log(workBench)
 
-    tapdAssistUtils.showFlash('正在跳转团队成员...')
-    window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
-  },
-  'Alt+E': function (e) {
-    let buttons = {
-      '#edit_story_btn': '正在跳转需求编辑...',
-      '#edit_bug': '正在跳转缺陷编辑...',
-      '#btn_cancel_edit': '正在退出需求编辑...',
-      '#id-tapd-toolbar #cancle': '正在退出缺陷编辑...'
-    }
-    for (let key in buttons) {
-      let text = buttons[key]
-      let ele = $(key)[0]
-      if (ele) {
-        tapdAssistUtils.showFlash(text)
-        ele.click()
+  SHORTCUTS = {
+    'Alt+Escape': function () {
+      if (!$('body').hasClass('.left-tree-close')) {
+        menuLock = true
+      }
+    },
+    [workBench]: {
+      target: '#top_nav_worktable',
+      description: '正在跳转工作台...'
+    },
+    [message]: {
+      target: '#top_nav_worktable_msg',
+      description: '正在跳转消息页面...'
+    },
+    [memberList]: function () {
+      let projectId = tapdAssistUtils.getProjectId()
+      if (!projectId) {
+        tapdAssistUtils.showFlash('❌ 当前不是项目页面')
         return
       }
-    }
-  },
-  'Alt+R': function () {
-    let projectId = tapdAssistUtils.getProjectId()
-    if (!projectId) {
-      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
-      return
-    }
 
-    tapdAssistUtils.showFlash('正在跳转需求统计报表...')
-    let defaultAnchor = tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
-    tapdAssistUtils.ajax({
-      url: tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
-    }).then(function (data) {
-      let htmlDoc = $.parseHTML(data)
-      let hrefs = $(htmlDoc)
-        .find('#custom-statistics ul.custom-statistic-list li a')
-        .toArray()
-        .map(function (a) {
-          return a.getAttribute('href')
-        })
-      let anchor = hrefs[0]
-      if (anchor) {
-        window.location.href = anchor
-      } else {
-        window.location.href = defaultAnchor
+      tapdAssistUtils.showFlash('正在跳转团队成员...')
+      window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
+    },
+    [editRequireBug]: function (e) {
+      let buttons = {
+        '#edit_story_btn': '正在跳转需求编辑...',
+        '#edit_bug': '正在跳转缺陷编辑...',
+        '#btn_cancel_edit': '正在退出需求编辑...',
+        '#id-tapd-toolbar #cancle': '正在退出缺陷编辑...'
       }
-    }, function (err) {
-      window.location.href = defaultAnchor
-    })
-  },
-  'Alt+B': function () {
-    let projectId = tapdAssistUtils.getProjectId()
-    if (!projectId) {
-      tapdAssistUtils.showFlash('❌ 当前不是项目页面')
-      return
-    }
+      for (let key in buttons) {
+        let text = buttons[key]
+        let ele = $(key)[0]
+        if (ele) {
+          tapdAssistUtils.showFlash(text)
+          ele.click()
+          return
+        }
+      }
+    },
+    [requireReport]: function () {
+      let projectId = tapdAssistUtils.getProjectId()
+      if (!projectId) {
+        tapdAssistUtils.showFlash('❌ 当前不是项目页面')
+        return
+      }
 
-    tapdAssistUtils.showFlash('正在跳转缺陷统计报表...')
-    let defaultAnchor = tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008')
-    tapdAssistUtils.ajax({
-      url: tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/index_simple')
-    }).then(function (data) {
-      let htmlDoc = $.parseHTML(data)
-      let hrefs = $(htmlDoc)
-        .find('.tbox-content ul li a')
-        .toArray()
-        .map(function (a) {
-          return a.getAttribute('href')
-        })
-        .filter(function (href) {
-          return href.indexOf('/bugtrace/bugreports/stat_general/general/customreport-') >= 0
-        })
-      let anchor = hrefs[0]
-      if (anchor) {
-        window.location.href = anchor
-      } else {
+      tapdAssistUtils.showFlash('正在跳转需求统计报表...')
+      let defaultAnchor = tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
+      tapdAssistUtils.ajax({
+        url: tapdAssistUtils.getProjectUrl('/prong/stories/stats_charts')
+      }).then(function (data) {
+        let htmlDoc = $.parseHTML(data)
+        let hrefs = $(htmlDoc)
+          .find('#custom-statistics ul.custom-statistic-list li a')
+          .toArray()
+          .map(function (a) {
+            return a.getAttribute('href')
+          })
+        let anchor = hrefs[0]
+        if (anchor) {
+          window.location.href = anchor
+        } else {
+          window.location.href = defaultAnchor
+        }
+      }, function (err) {
         window.location.href = defaultAnchor
+      })
+    },
+    [bugReport]: function () {
+      let projectId = tapdAssistUtils.getProjectId()
+      if (!projectId) {
+        tapdAssistUtils.showFlash('❌ 当前不是项目页面')
+        return
       }
-    }, function (err) {
-      window.location.href = defaultAnchor
-    })
-  },
-  'Alt+H|Alt+ArrowLeft': function () {
-    let element = $('.page-btn.page-prev')
-    let anchor = element.children('a')
-    if (anchor.length) {
-      element = anchor
-    }
-    let element1 = element[0]
-    if (element1) {
-      tapdAssistUtils.showFlash('⬅ 跳转到上一页️...')
-      element1.click()
-    }
-  },
-  'Alt+L|Alt+ArrowRight': function () {
-    let element = $('.page-btn.page-next')
-    let anchor = element.children('a')
-    if (anchor.length) {
-      element = anchor
-    }
-    let element1 = element[0]
-    if (element1) {
-      tapdAssistUtils.showFlash('跳转到下一页️➡ ...')
-      element1.click()
-    }
-  },
-  'Alt+S': function (e) {
-    e.preventDefault()
-    $('#search-keyword').focus().select()
-  },
-  'Alt+F': function (e) {
-    let btn = $('.editor-btn[data-name=fullscreen]')[0]
-    if (btn) {
+
+      tapdAssistUtils.showFlash('正在跳转缺陷统计报表...')
+      let defaultAnchor = tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/stat_general/general/systemreport-1000000000000000008')
+      tapdAssistUtils.ajax({
+        url: tapdAssistUtils.getProjectUrl('/bugtrace/bugreports/index_simple')
+      }).then(function (data) {
+        let htmlDoc = $.parseHTML(data)
+        let hrefs = $(htmlDoc)
+          .find('.tbox-content ul li a')
+          .toArray()
+          .map(function (a) {
+            return a.getAttribute('href')
+          })
+          .filter(function (href) {
+            return href.indexOf('/bugtrace/bugreports/stat_general/general/customreport-') >= 0
+          })
+        let anchor = hrefs[0]
+        if (anchor) {
+          window.location.href = anchor
+        } else {
+          window.location.href = defaultAnchor
+        }
+      }, function (err) {
+        window.location.href = defaultAnchor
+      })
+    },
+    [prevPage]: function () {
+      let element = $('.page-btn.page-prev')
+      let anchor = element.children('a')
+      if (anchor.length) {
+        element = anchor
+      }
+      let element1 = element[0]
+      if (element1) {
+        tapdAssistUtils.showFlash('⬅ 跳转到上一页️...')
+        element1.click()
+      }
+    },
+    [nextPage]: function () {
+      let element = $('.page-btn.page-next')
+      let anchor = element.children('a')
+      if (anchor.length) {
+        element = anchor
+      }
+      let element1 = element[0]
+      if (element1) {
+        tapdAssistUtils.showFlash('跳转到下一页️➡ ...')
+        element1.click()
+      }
+    },
+    [search]: function (e) {
       e.preventDefault()
-      btn.click()
-      return
-    }
-    if (tapdAssistUtils.toggleFullscreen($('#General_div')[0])) {
-      e.preventDefault()
-    }
-  },
-  'Shift+Slash': function () {
-    let element = document.activeElement
-    let isTextarea = element.tagName === 'TEXTAREA'
-    let isInput = element.tagName === 'INPUT' && ['text', 'password', 'search', 'url'].indexOf(element.type) >= 0
-    let isEditable = element.contentEditable === 'true'
-    if (isTextarea || isInput ||isEditable) {
-      return
-    }
-    dialog.toggle()
-  },
-  'Alt': function () {
-    altDownAt = Date.now()
-    clearAltDownTimeout()
-    altDownTimeoutId = setTimeout(function () {
+      $('#search-keyword').focus().select()
+    },
+    [fullScreen]: function (e) {
+      let btn = $('.editor-btn[data-name=fullscreen]')[0]
+      if (btn) {
+        e.preventDefault()
+        btn.click()
+        return
+      }
+      if (tapdAssistUtils.toggleFullscreen($('#General_div')[0])) {
+        e.preventDefault()
+      }
+    },
+    [help]: function () {
+      let element = document.activeElement
+      let isTextarea = element.tagName === 'TEXTAREA'
+      let isInput = element.tagName === 'INPUT' && ['text', 'password', 'search', 'url'].indexOf(element.type) >= 0
+      let isEditable = element.contentEditable === 'true'
+      if (isTextarea || isInput || isEditable) {
+        return
+      }
+      dialog.toggle()
+    },
+    [driver]: function () {
+      altDownAt = Date.now()
       clearAltDownTimeout()
-      dialog.show()
-    }, 1000)
-    leftTreeClose = $('body').hasClass('left-tree-close')
-    $('body').removeClass('left-tree-close')
-    return 'alt-down'
-  },
-  'Alt+K': function () {
-    chrome.storage.sync.get('shortcut', function (val) {
-      console.log(val)
-    })
-  },
-  'Ctrl+C|Meta+C': function (e, keys) {
-    window.postMessage({
-      type: "tapdAssistTryCopyTitle",
-      data: ""
-    }, "*");
-  },
-  'Alt+C': function (e, keys) {
-    window.postMessage({
-      type: "tapdAssistTryCopyTitle2",
-      data: ""
-    }, "*");
-  },
-  'Alt+Minus': function (e, keys) {
-    let ele = document.webkitFullscreenElement
-    if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
-      ele = undefined
-    }
-    tapdAssistUtils.changeFullscreenZoom(-1, ele)
-  },
-  'Alt+Equal': function (e, keys) {
-    let ele = document.webkitFullscreenElement
-    if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
-      ele = undefined
-    }
-    tapdAssistUtils.changeFullscreenZoom(1, ele)
-  },
-}
+      altDownTimeoutId = setTimeout(function () {
+        clearAltDownTimeout()
+        dialog.show()
+      }, 1000)
+      leftTreeClose = $('body').hasClass('left-tree-close')
+      $('body').removeClass('left-tree-close')
+      return driver + '-down'
+    },
+    [copyTitleLink]: function (e, keys) {
+      window.postMessage({
+        type: "tapdAssistTryCopyTitle",
+        data: ""
+      }, "*");
+    },
+    [copyTitle]: function (e, keys) {
+      window.postMessage({
+        type: "tapdAssistTryCopyTitle2",
+        data: ""
+      }, "*");
+    },
+    [zoomIn]: function (e, keys) {
+      let ele = document.webkitFullscreenElement
+      if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
+        ele = undefined
+      }
+      tapdAssistUtils.changeFullscreenZoom(-1, ele)
+    },
+    [zoomOut]: function (e, keys) {
+      let ele = document.webkitFullscreenElement
+      if (!$(ele).hasClass('tapd-assist-fullscreen-element')) {
+        ele = undefined
+      }
+      tapdAssistUtils.changeFullscreenZoom(1, ele)
+    },
+  }
+  console.log(SHORTCUTS)
+});
+
 
 let executeShortcuts = function (shortcuts, e) {
   let fnKeys = ['alt', 'ctrl', 'meta', 'shift']
@@ -339,40 +377,46 @@ let ensureListenDocumentKeyEvents = function () {
     }
     doc.body.setAttribute('tapdAssistInitialized', 'yes')
 
-    let listen = function () {
-      doc.addEventListener('keydown', function (e) {
-        let result = executeShortcuts(SHORTCUTS, e)
-        let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
-        if (result.match && result.result !== 'alt-down' || projectResult.match && projectResult.result !== 'alt-down') {
-          clearAltDownTimeout()
-        }
-      })
-
-      doc.addEventListener('keyup', function (e) {
-        if (e.key === 'Alt') {
-          dialog.hide()
-          clearAltDownTimeout()
-
-          const QUICK_CLICK_THRESHOLD = 400
-          let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
-          if (quickAlt) {
-            $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
-          } else if (menuLock) {
-          } else {
-            $('body').addClass('left-tree-close minimenu')
+    tapdAssistOption.getShortcuts().then(function (data) {
+      let driver = data.get('driver')
+      let projectDriver = data.get('projectDriver')
+      let listen = function () {
+        doc.addEventListener('keydown', function (e) {
+          console.log('keydown')
+          let result = executeShortcuts(SHORTCUTS, e)
+          let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
+          if (result.match && result.result !== driver + '-down' || projectResult.match && projectResult.result !== projectDriver + '-down') {
+            clearAltDownTimeout()
           }
-        }
-      })
-    }
-    if (!doc.body.childElementCount && options.waitContent) {
-      let id = setInterval(function () {
-        if (doc.body.childElementCount) {
-          clearInterval(id)
-          listen()
-        }
-      }, 200)
-    }
-    listen()
+        })
+
+        doc.addEventListener('keyup', function (e) {
+          console.log('keyup')
+          if (e.key.toLowerCase() === driver) {
+            dialog.hide()
+            clearAltDownTimeout()
+
+            const QUICK_CLICK_THRESHOLD = 400
+            let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
+            if (quickAlt) {
+              $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
+            } else if (menuLock) {
+            } else {
+              $('body').addClass('left-tree-close minimenu')
+            }
+          }
+        })
+      }
+      if (!doc.body.childElementCount && options.waitContent) {
+        let id = setInterval(function () {
+          if (doc.body.childElementCount) {
+            clearInterval(id)
+            listen()
+          }
+        }, 200)
+      }
+      listen()
+    })
   }
   ensure(window, document)
   $('iframe').toArray().forEach(function (iframe) {
@@ -395,7 +439,8 @@ chrome.extension.sendMessage({
 
 let scripts = [
   'utils.js',
-  'page_inject.js'
+  'page_inject.js',
+  'tapdOptions.js'
 ]
 scripts.forEach(function (script) {
   tapdAssistUtils.injectScript({
