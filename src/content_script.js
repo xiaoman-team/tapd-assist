@@ -91,7 +91,7 @@ tapdAssistOption.getShortcuts().then(function (data) {
   let workBench = data.get('open_workbench')
   let message = data.get('open_message')
   let memberList = data.get('member_list')
-  let editRequireBug = data.get('edit_require')
+  let editStoryBug = data.get('edit_story')
   let requireReport = data.get('recent_require_report')
   let bugReport = data.get('recent_bug_report')
   let prevPage = data.get('prev_page')
@@ -131,7 +131,7 @@ tapdAssistOption.getShortcuts().then(function (data) {
       tapdAssistUtils.showFlash('正在跳转团队成员...')
       window.location.href = tapdAssistUtils.getProjectUrl('/settings/team')
     },
-    [editRequireBug]: function (e) {
+    [editStoryBug]: function (e) {
       let buttons = {
         '#edit_story_btn': '正在跳转需求编辑...',
         '#edit_bug': '正在跳转缺陷编辑...',

@@ -58,7 +58,7 @@ let tapdDefaultOptions = [
 let tapdDefaultShortcuts = [
   {
     title: '编辑需求或缺陷',
-    key: 'edit_require',
+    key: 'edit_story',
     value: 'Alt+E',
     description: 'test'
   },{
