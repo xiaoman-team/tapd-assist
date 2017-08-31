@@ -36,7 +36,7 @@ let tapdAssistUtils = {
         let xhr = jQuery.ajaxSettings.xhr()
         let setRequestHeader = xhr.setRequestHeader
         xhr.setRequestHeader = function (name, value) {
-          if (name == 'X-Requested-With') return
+          if (name === 'X-Requested-With') return
           setRequestHeader.call(this, name, value)
         }
         return xhr
