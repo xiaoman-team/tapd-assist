@@ -19,27 +19,40 @@ let options = {
     ele.next().text(option.description)
   },
   changeShortcuts: function (event) {
-    let key = ''
     event.preventDefault()
-    if (event.ctrlKey || event.altKey || event.metaKey || event.shiftKey) {
-      if (event.ctrlKey) {
-        key = 'Ctrl'
-      } else if (event.altKey) {
-        key = 'Alt'
-      } else if (event.metaKey) {
-        key = 'Meta'
-      } else if (event.shiftKey) {
-        key = 'Shift'
-      }
-      $(this).val(key + '+' + String.fromCharCode(event.keyCode))
-    } else if (event.keyCode) {
-      let textKey = String.fromCharCode(event.keyCode)
-      $(this).val(textKey)
+
+    let keyMap = {
+      'metaKey': 'Meta',
+      'ctrlKey': 'Ctrl',
+      'altKey': 'Alt',
+      'shiftKey': 'Shift'
     }
+
+    let keys = []
+    for (let key in keyMap) {
+      if (event[key]) {
+        keys.push(keyMap[key])
+      }
+    }
+    if (keys.length === 0) {
+      return
+    }
+
+    let char = String.fromCharCode(event.keyCode)
+    keys.push(char)
+    $(this).val(keys.join('+'))
   }
 }
 
-let save_options = () => {
+let saveOptions = (opts = {}) => {
+  let {
+    start = '保存中...',
+    end = '保存完毕'
+  } = opts
+
+  let status = $('#status')
+  status.text(start).show()
+
   let select = $('select')
   let eleShortcuts = $('tbody input')
   let options = {}
@@ -58,18 +71,12 @@ let save_options = () => {
   chrome.storage.local.set({
     localOptions: options
   }, function () {
-    let status = document.getElementById('status')
-    status.textContent = 'Updated'
-    status.style.background = '#39a1f4'
-    setTimeout(function () {
-      status.textContent = ''
-      status.style.background = '#fff'
-    }, 750)
+    status.text(end)
+    status.fadeOut(800)
   })
 }
 
 let restore_options = () => {
-
   chrome.storage.local.get('localOptions', function (result) {
     let local = result.localOptions
 
@@ -107,15 +114,18 @@ let restore_options = () => {
         switch (j) {
           case 0:
             td.text(item.title)
+              .addClass('title')
             break
           case 1:
             let input = $('<input>').addClass(item.key)
             let text = (local && local.shortcuts[item.key]) || item.value
             input.val(text)
             td.append(input)
+              .addClass('shortcut')
             break
           case 2:
             td.text(item.description)
+              .addClass('description')
             break
           default: {
           }
@@ -130,7 +140,8 @@ let restore_options = () => {
 
 let reset = () => {
   let selects = $('select')
-  for (let ele of selects.toArray()) {
+  for (let ele of selects) {
+    ele = $(ele)
     let id = ele.attr('id')
     let select = defaultOptions.find(option => option.id === id)
     if (select) {
@@ -143,7 +154,8 @@ let reset = () => {
   }
 
   let inputs = $('tbody input')
-  for (let ele of inputs.toArray()) {
+  for (let ele of inputs) {
+    ele = $(ele)
     let key = ele.attr('class')
 
     let shortcut = defaultShortcuts.find(shortcut => shortcut.key === key)
@@ -153,7 +165,10 @@ let reset = () => {
       console.warn('shortcut not found', key)
     }
   }
-  save_options()
+  saveOptions({
+    start: '正在重置...',
+    end: '重置完毕',
+  })
 }
 
 $(function () {
@@ -163,6 +178,6 @@ $(function () {
       options.changeKey($(this))
     }
   )
-  document.getElementById('save').addEventListener('click', save_options)
+  document.getElementById('save').addEventListener('click', saveOptions)
   document.getElementById('reset').addEventListener('click', reset)
 })

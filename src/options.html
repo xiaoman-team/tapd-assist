@@ -1,33 +1,35 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>tapd assistant settings</title>
-    <link rel="stylesheet" href="options.css">
+  <meta charset="UTF-8">
+  <title>TAPD助手选项</title>
+  <link rel="stylesheet" href="options.css">
 </head>
 
 <body>
 <div class="content">
-    <h2>设置</h2>
+  <h2>设置</h2>
 
-    <div class="options"></div>
-    <table border="1" cellspacing="0" cellpadding="5px">
-        <thead>
-        <tr>
-            <th>功能</th>
-            <th>快捷键</th>
-            <th>详细描述</th>
-        </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
-    <div>
-        <button id="save">保存</button>
-        <button id="reset">重置</button>
-    </div>
-    <div class="status">
-        <div id="status"></div>
-    </div>
+  <div class="options"></div>
+  <table border="1" cellspacing="0" cellpadding="5px">
+    <thead>
+    <tr>
+      <th>功能</th>
+      <th>快捷键</th>
+      <th style="text-align: left;">详细描述</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div>
+    <button id="save">保存</button>
+    <button id="reset">重置</button>
+  </div>
+
+  <div class="status-wrapper">
+    <div id="status"></div>
+  </div>
 </div>
 <script src="./jquery.js"></script>
 <script src="./tapdOptions.js"></script>
