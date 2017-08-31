@@ -17,12 +17,17 @@ let tapdDefaultOptions = [
         value: 'meta',
         text: 'Meta',
         description: '按下和弹起Meta切换左侧项目列表，或者快击。长按切出帮助页面。'
+      },
+      {
+        value: 'shift',
+        text: 'Shift',
+        description: '按下和弹起Shift切换左侧项目列表，或者快击。长按切出帮助页面。'
       }
     ]
   },
   {
     title: '项目跳转驱动键',
-    id: 'projectDriver',
+    id: 'project_driver',
     options: [
       {
         value: 'alt',
@@ -43,7 +48,7 @@ let tapdDefaultOptions = [
   },
   {
     title: '项目列表排序',
-    id: 'sort',
+    id: 'project_list_order',
     options: [
       {
         value: 'default',

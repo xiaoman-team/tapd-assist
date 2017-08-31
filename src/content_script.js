@@ -58,13 +58,13 @@ chrome.extension.sendRequest({
 })
 
 let menuLock = false
-let altDownAt
-let altDownTimeoutId
+let driverDownAt
+let driverDownTimeoutId
 let leftTreeClose
-let clearAltDownTimeout = function () {
-  if (altDownTimeoutId) {
-    clearTimeout(altDownTimeoutId)
-    altDownTimeoutId = undefined
+let clearDriverDownTimeout = function () {
+  if (driverDownTimeoutId) {
+    clearTimeout(driverDownTimeoutId)
+    driverDownTimeoutId = undefined
   }
 }
 let transform = (key) => {
@@ -97,15 +97,8 @@ tapdAssistOption.getShortcuts().then(function (data) {
   let help = transform(data.get('help'))
   let zoomIn = transform(data.get('zoom_in'))
   let zoomOut = transform(data.get('zoom_out'))
-  console.log(driver)
-  console.log(workBench)
 
   SHORTCUTS = {
-    'Alt+Escape': function () {
-      if (!$('body').hasClass('.left-tree-close')) {
-        menuLock = true
-      }
-    },
     [workBench]: {
       target: '#top_nav_worktable',
       description: '正在跳转工作台...'
@@ -252,10 +245,10 @@ tapdAssistOption.getShortcuts().then(function (data) {
       dialog.toggle()
     },
     [driver]: function () {
-      altDownAt = Date.now()
-      clearAltDownTimeout()
-      altDownTimeoutId = setTimeout(function () {
-        clearAltDownTimeout()
+      driverDownAt = Date.now()
+      clearDriverDownTimeout()
+      driverDownTimeoutId = setTimeout(function () {
+        clearDriverDownTimeout()
         dialog.show()
       }, 1000)
       leftTreeClose = $('body').hasClass('left-tree-close')
@@ -372,25 +365,24 @@ let ensureListenDocumentKeyEvents = function () {
 
     tapdAssistOption.getShortcuts().then(function (data) {
       let driver = data.get('driver')
-      let projectDriver = data.get('projectDriver')
+      let projectDriver = data.get('project_driver')
       let listen = function () {
         doc.addEventListener('keydown', function (e) {
-          console.log('keydown')
           let result = executeShortcuts(SHORTCUTS, e)
           let projectResult = executeShortcuts(PROJECT_SHORTCUTS, e)
           if (result.match && result.result !== driver + '-down' || projectResult.match && projectResult.result !== projectDriver + '-down') {
-            clearAltDownTimeout()
+            clearDriverDownTimeout()
           }
         })
 
         doc.addEventListener('keyup', function (e) {
-          console.log('keyup')
-          if (e.key.toLowerCase() === driver) {
+          let key = e.key.toLowerCase()
+          if (key === driver || (key === 'control' && driver === 'ctrl')) {
             dialog.hide()
-            clearAltDownTimeout()
+            clearDriverDownTimeout()
 
             const QUICK_CLICK_THRESHOLD = 400
-            let quickAlt = altDownAt && Date.now() - altDownAt < QUICK_CLICK_THRESHOLD
+            let quickAlt = driverDownAt && Date.now() - driverDownAt < QUICK_CLICK_THRESHOLD
             if (quickAlt) {
               $('body').toggleClass('left-tree-close minimenu', !leftTreeClose)
             } else if (menuLock) {

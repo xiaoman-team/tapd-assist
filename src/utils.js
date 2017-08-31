@@ -36,7 +36,7 @@ let tapdAssistUtils = {
         let xhr = jQuery.ajaxSettings.xhr()
         let setRequestHeader = xhr.setRequestHeader
         xhr.setRequestHeader = function (name, value) {
-          if (name === 'X-Requested-With') return
+          if (name == 'X-Requested-With') return
           setRequestHeader.call(this, name, value)
         }
         return xhr
@@ -257,38 +257,44 @@ let tapdAssistUtils = {
     }
     let projects = $(root).children('li').toArray().filter(function (li) {
       return getProjectId(li)
-    }).sort(function (a, b) {
-      return getProjectId(b) - getProjectId(a)
     })
     if (projects.length) {
       root.setAttribute('tapdAssistInitialized', 'yes')
     }
 
-    projects.concat().reverse().forEach(function (ele) {
-      root.prepend(ele)
-    })
-
     let shortcuts = {}
-    for (let i = 0; i < projects.length; i++) {
-      let index = i + 1
-      let li = projects[i]
-      if ($(li).hasClass('iamloaded')) {
-        continue
+    tapdAssistOption.getShortcuts().then(function(data){
+      let projectDriver = data.get('project_driver')
+      let projectListOrder = data.get('project_list_order')
+
+      if (projectListOrder === 'id_desc') {
+        projects = projects.sort(function (a, b) {
+          return getProjectId(b) - getProjectId(a)
+        })
+        projects.concat().reverse().forEach(function (ele) {
+          root.prepend(ele)
+        })
       }
-      li.style.position = 'relative'
 
-      let span = document.createElement('span')
-      span.className = 'assist-project-index'
-      span.textContent = index
-      li.appendChild(span)
+      for (let i = 0; i < projects.length; i++) {
+        let index = i + 1
+        let li = projects[i]
+        if ($(li).hasClass('iamloaded')) {
+          continue
+        }
+        li.style.position = 'relative'
 
-      let anchor = $(li).children('a')[0]
-      if (anchor) {
-        let name = anchor.title
-        anchor.setAttribute('project-index', i + 1)
-        tapdAssistOption.getShortcuts().then(function(data){
-          let ProjectDriver = data.get('projectDriver')
-          shortcuts[ProjectDriver + '+' + index] = function () {
+        let span = document.createElement('span')
+        span.className = 'assist-project-index'
+        span.textContent = index
+        li.appendChild(span)
+
+        let anchor = $(li).children('a')[0]
+        if (anchor) {
+          let name = anchor.title
+          anchor.setAttribute('project-index', i + 1)
+
+          shortcuts[projectDriver + '+' + index] = function () {
             if (name) {
               tapdAssistUtils.showFlash('正在跳转到' + name + '...')
             }
@@ -296,10 +302,9 @@ let tapdAssistUtils = {
             span.textContent = '\u2713'
             li.style.backgroundColor = '#303236'
           }
-        })
-
+        }
       }
-    }
+    })
     return shortcuts
   },
   patchComments: function () {
