@@ -156,24 +156,6 @@ let reset = () => {
   save_options()
 }
 
-let changeKey = (ele) => {
-  let id = ele.attr('id')
-  let val = ele.find('option:selected').val()
-  let text
-  for (let i = 0; i < defaultOptions.length; i++) {
-    let item = defaultOptions[i]
-    if (item.id == id) {
-      item.options.forEach(function (e) {
-        if (e.value == val) {
-          text = e.description
-        }
-      })
-    }
-
-  }
-  ele.next().text(text)
-}
-
 $(function () {
   $(document).ready(restore_options())
   $('tbody').on('keydown', 'input', options.changeShortcuts)
