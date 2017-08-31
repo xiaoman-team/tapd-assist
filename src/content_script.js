@@ -68,22 +68,15 @@ let clearAltDownTimeout = function () {
   }
 }
 let transform = (key) => {
+  // TODO @nie
   return key.split('+').map(function (split) {
-    let str = split;
-    switch (split) {
-      case '?':
-        str = 'Slash'
-        break
-      case '+':
-        str = 'Equal'
-        break
-      case '-':
-        str = 'Minus'
-        break
-      default :
+    let charMap = {
+      '?': 'Slash',
+      '+': 'Equal',
+      '-': 'Minus'
     }
-    return str;
-  }).sort().join('+');
+    return charMap[split] || split
+  }).sort().join('+')
 }
 let SHORTCUTS
 tapdAssistOption.getShortcuts().then(function (data) {
@@ -97,7 +90,7 @@ tapdAssistOption.getShortcuts().then(function (data) {
   let prevPage = data.get('prev_page')
   let nextPage = data.get('next_page')
   let search = data.get('search')
-  let createProject = data.get('create_project')
+  // let createProject = data.get('create_project')
   let fullScreen = data.get('full_screen')
   let copyTitleLink = data.get('copy_title_link')
   let copyTitle = data.get('copy_title')
@@ -273,13 +266,13 @@ tapdAssistOption.getShortcuts().then(function (data) {
       window.postMessage({
         type: "tapdAssistTryCopyTitle",
         data: ""
-      }, "*");
+      }, "*")
     },
     [copyTitle]: function (e, keys) {
       window.postMessage({
         type: "tapdAssistTryCopyTitle2",
         data: ""
-      }, "*");
+      }, "*")
     },
     [zoomIn]: function (e, keys) {
       let ele = document.webkitFullscreenElement
@@ -297,7 +290,7 @@ tapdAssistOption.getShortcuts().then(function (data) {
     },
   }
   console.log(SHORTCUTS)
-});
+})
 
 
 let executeShortcuts = function (shortcuts, e) {

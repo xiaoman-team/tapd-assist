@@ -57,7 +57,7 @@ let tapdDefaultOptions = [
       }
     ]
   }
-];
+]
 
 let tapdDefaultShortcuts = [
   {
@@ -150,24 +150,24 @@ let tapdDefaultShortcuts = [
     value: 'Alt+Minus',
     description: ''
   }
-];
+]
 
 let tapdAssistOption = {
   getShortcuts: function() {
     return new Promise(function (resolve, reject) {
       chrome.storage.local.get('localOptions', resolve)
     }).then(function (result) {
-      let shortcutsMap = new Map();
-      let local = result.localOptions;
+      let shortcutsMap = new Map()
+      let local = result.localOptions
 
       for (let item of tapdDefaultOptions) {
         let key = (local && local[item.id]) || item.options[0].value
-        shortcutsMap.set(item.id, key);
+        shortcutsMap.set(item.id, key)
       }
 
       for (let item of tapdDefaultShortcuts) {
         let value = (local && local.shortcuts[item.key]) || item.value
-        shortcutsMap.set(item.key, value);
+        shortcutsMap.set(item.key, value)
       }
       return shortcutsMap
     })

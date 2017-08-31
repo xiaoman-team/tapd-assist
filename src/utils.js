@@ -119,7 +119,7 @@ let tapdAssistUtils = {
           $(ele).css('zoom', 1)
         }
       }
-    });
+    })
   },
   replaceLinkInText: function (node) {
     let text = node.data
@@ -407,6 +407,6 @@ let tapdAssistUtils = {
         }
         tapdAssistUtils.showFlash(`${Math.round(zoomValue * 100)}%`)
       })
-    });
+    })
   }
 }
