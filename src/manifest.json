@@ -30,6 +30,10 @@
     "http://*.tapd.cn/",
     "https://*.tapd.cn/"
   ],
+  "optional_permissions": [
+    "tabs",
+    "http://*.xiaoman.cn/"
+  ],
   "content_scripts": [
     {
       "matches": [

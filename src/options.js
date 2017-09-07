@@ -44,6 +44,17 @@ let options = {
   }
 }
 
+let getLocalApi = function(){
+  return new Promise(function(resolve,reject){
+    chrome.storage.local.get('localOptions', resolve)
+  }).then(function(result){
+      let map = new Map()
+      let local = result.localOptions
+      map.set('api', local['external_api'])
+      return map;
+    })
+}
+
 let saveOptions = (opts = {}) => {
   let {
     start = '保存中...',
@@ -53,32 +64,73 @@ let saveOptions = (opts = {}) => {
   let status = $('#status')
   status.text(start).show()
 
-  let select = $('select')
+  let eleOptionValue = $('select')
   let eleShortcuts = $('tbody input')
   let options = {}
   let objShortcuts = {}
 
-  for (let i = 0; i < select.length; i++) {
-    let id = select.eq(i).attr('id')
-    options[id] = select.eq(i).val()
+  for (let i = 0; i < eleOptionValue.length; i++) {
+    let id = eleOptionValue.eq(i).attr('id')
+    options[id] = eleOptionValue.eq(i).val()
   }
+
+  let api = $('#external_api').val()
+
+  console.log('save')
 
   for (let shortcut of eleShortcuts) {
     objShortcuts[shortcut.getAttribute('class')] = shortcut.value
   }
   options.shortcuts = objShortcuts
 
-  chrome.storage.local.set({
-    localOptions: options
-  }, function () {
-    status.text(end)
-    status.fadeOut(800)
-  })
+  if(!api) {
+    getLocalApi().then(function(data){
+      let localApi = data.get('api')
+      if(localApi) {
+        console.log('api value is not exsit，but have local api')
+        console.log('local: ' + localApi)
+        removePermission(localApi)
+        chrome.storage.local.set({
+          localOptions: options
+        }, function () {
+          status.text(end)
+          status.fadeOut(800)
+        })
+      } else {
+        console.log('api value is not exsit,local api is not exist')
+        status.text(end)
+        status.fadeOut(800)
+      }
+    })
+  } else {
+    console.log('api value is exist')
+    setPermission(api, function(flag){
+      if(flag === 1) {
+        options['external_api'] = api
+
+        chrome.storage.local.set({
+          localOptions: options
+        }, function () {
+          status.text(end)
+          status.fadeOut(800)
+        })
+      }
+    })
+
+  }
+
+  //chrome.storage.local.set({
+  //  localOptions: options
+  //}, function () {
+  //  status.text(end)
+  //  status.fadeOut(800)
+  //})
 }
 
 let restore_options = () => {
   chrome.storage.local.get('localOptions', function (result) {
     let local = result.localOptions
+    console.log(local)
 
     for (let item of defaultOptions) {
       let id = item.id
@@ -87,23 +139,37 @@ let restore_options = () => {
       let eleTitle = $('<span></span>').text(item.title)
       eleOptionDiv.append(eleTitle)
 
-      let eleSelect = $('<select></select>').attr('id', id)
-      for (let option of item.options) {
-        let eleOption = $('<option></option>').val(option.value).text(option.text)
-        eleSelect.append(eleOption)
+      let type = item.type
+      if(type === 'select') {
+        let eleSelect = $('<select></select>').attr('id', id).attr('class', 'option_value')
+        for (let option of item.options) {
+          let eleOption = $('<option></option>').val(option.value).text(option.text)
+          eleSelect.append(eleOption)
+        }
+
+        //下拉框的value
+        let val = (local && local[id]) || item.options[0].value
+        eleSelect.val(val)
+        eleOptionDiv.append(eleSelect)
+        let eleDescDiv = $('<div></div>').attr('class', 'desc')
+
+        //根据value展示对应的描述
+        let option = item.options.find(item => item.value === val)
+        let description = option && option.description
+        eleDescDiv.text(description)
+        eleOptionDiv.append(eleDescDiv)
+
+      } else if(type === 'text_box') {
+        let value = (local && local[id]) || item.value
+        console.log(value)
+        let textBox = $('<input>').attr({id: id, class: 'option_value'}).val(value)
+        eleOptionDiv.append(textBox)
+
+        let description = item.description
+        let eleDescDiv = $('<div></div>').attr('class', 'desc').text(description)
+        eleOptionDiv.append(eleDescDiv)
+
       }
-      //下拉框的value
-      let val = (local && local[id]) || item.options[0].value
-      eleSelect.val(val)
-      eleOptionDiv.append(eleSelect)
-
-      let eleDescDiv = $('<div></div>').attr('class', 'desc')
-      //根据value展示对应的描述
-      let option = item.options.find(item => item.value === val)
-      let description = option && option.description
-      eleDescDiv.text(description)
-      eleOptionDiv.append(eleDescDiv)
-
       $('.options').append(eleOptionDiv)
     }
 
@@ -118,7 +184,7 @@ let restore_options = () => {
             break
           case 1:
             let input = $('<input>').addClass(item.key)
-            let text = (local && local.shortcuts[item.key]) || item.value
+            let text = (local && local.shortcuts && local.shortcuts[item.key]) || item.value
             input.val(text)
             td.append(input)
               .addClass('shortcut')
@@ -153,6 +219,9 @@ let reset = () => {
     }
   }
 
+  $('#external_api').val('')
+  removePermission()
+
   let inputs = $('tbody input')
   for (let ele of inputs) {
     ele = $(ele)
@@ -171,6 +240,66 @@ let reset = () => {
   })
 }
 
+let setPermission = function(api, callback) {
+  let flag
+  chrome.permissions.request({
+    permissions: [],
+    origins: [api]
+  }, function(granted) {
+    if (granted) {
+      console.log('grated')
+      checkPermission(api)
+      flag = 1
+      callback(flag)
+    } else {
+      console.log('granted failed')
+      $('#external_api').val('')
+      flag = 0
+      callback(flag)
+    }
+  });
+}
+
+let removePermission = function() {
+  getLocalApi().then(function(data){
+    let localApi = data.get('api')
+    if(!localApi)
+    return
+
+    chrome.permissions.remove({
+      permissions: [],
+      origins: [localApi]
+    }, function(removed) {
+      if (removed) {
+        // The permissions have been removed.
+        $('#external_api').val('')
+        console.log('removed')
+        checkPermission(localApi)
+      } else {
+        flag = 0
+        console.log('remove failed')
+      }
+    });
+  })
+
+}
+
+let checkPermission = function(localApi) {
+
+  chrome.permissions.contains({
+    permissions: ['tabs'],
+    origins: [localApi]
+  }, function(result) {
+    if (result) {
+      // The extension has the permissions.
+      console.log('has the permissions')
+    } else {
+      // The extension doesn't have the permissions.
+      console.log('doesn\'t have the permissions')
+    }
+  });
+}
+
 $(function () {
   $(document).ready(restore_options())
   $('tbody').on('keydown', 'input', options.changeShortcuts)
@@ -178,6 +307,7 @@ $(function () {
       options.changeKey($(this))
     }
   )
+  //document.querySelector('#save').addEventListener('click', setPermission);
   document.getElementById('save').addEventListener('click', saveOptions)
   document.getElementById('reset').addEventListener('click', reset)
 })

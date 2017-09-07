@@ -31,6 +31,8 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
     } else if (mutation.target.id === 'BugDescriptionDiv' && mutation.addedNodes.length) {
       tapdAssistUtils.patchFullscreenButton()
       ensureListenDocumentKeyEvents()
+    } else if (mutation.target.id === 'member_list_content' && mutation.addedNodes.length) {
+      markingLeaveMember()
     }
   })
 })
@@ -47,6 +49,15 @@ chrome.extension.sendRequest({
   cmd: 'readFile',
   url: chrome.extension.getURL('tpls/help_panel.tpl'),
 }, function (data) {
+  //let data = $(data)
+  //let shortcuts = tapdDefaultShortcuts.getShortcuts();
+  //for(let i=0; i<shortcuts.size(); i++) {
+  //  let modalDiv = data.find('.modal-body')
+  //  let secDiv = $('<div />').addClass('quickhelp')
+  //  let keySpan = $('<span />').addClass('shortcut-key')
+  //  let descSpan = $('<span />').addClass('shortcut-description')
+  //  secDiv.append(keySpan)
+  //}
   let div = $('<div />')
   div.html(data)
   dialog = div.find('#tapdAssistHelpPanel')
@@ -314,7 +325,6 @@ let executeShortcuts = function (shortcuts, e) {
     downKeys = downKeys.concat(code)
   }
   downKeys = downKeys.slice().sort().join('+')
-  // console.log('downKeys', downKeys)
 
   let handler = shortcutMap[downKeys]
   if (!handler) {
@@ -413,6 +423,85 @@ ensureListenDocumentKeyEvents()
 
 // bodyDOMObserver.disconnect()
 
+let markingLeaveMember = function() {
+  let row = $('.list-action-table tbody tr')
+  tapdAssistOption.getShortcuts().then(function(data){
+    let url = data.get('external_api')
+    if(!url) {
+      console.log('external API url not set')
+      return
+    }
+
+    let rows = $('.list-action-table tbody tr')
+    let users = rows.toArray().map(row => {
+      row = $(row)
+      return {
+        nick: row.find('.member-user-nick').text().trim(),
+        name: row.find('.member-name-div span').text().trim(),
+        email: row.find('.member-email-div').text().trim(),
+        department: row.find('.dept-name').text().trim(),
+        group: row.find('.member-role-div span').text().trim(),
+        status: row.find('.end-col-table').prev().text().trim()
+      }
+    })
+
+    let postJson = {
+      api: 'user-info',
+      data: {
+        users
+      }
+    }
+
+    chrome.extension.sendRequest({
+      cmd: 'postRequest',
+      data: {
+        type: 'POST',
+        url: url,
+        data: postJson,
+        dataType: 'json',
+        contentType: 'application/json'
+      }
+    }, function (response) {
+      if(response.code == 0 && response.data !== undefined) {
+        let users = response.data
+        rows.each(function(){
+          let eleNick = $(this).find('.member-user-nick')
+          let nickText = eleNick.text().trim()
+
+          for (let item of users) {
+            for(let tag of item.tags) {
+              if(!tag) break
+              else if (item.nick === nickText && tag.value === 'leave' && tag.rowStyle !== undefined) {
+                //console.log(nickText)
+                let {rowStyle} = tag
+                for (let key in rowStyle) {
+                  this.style[key] = rowStyle[key]
+                }
+
+                let eleTag = $('<span></span>')
+                eleTag.css({
+                  fontSize: '12px',
+                  padding: '2px 5px',
+                  marginLeft: '5px'
+                })
+                let {style} = tag
+                eleTag.css(style)
+                let {name} = tag
+                eleTag.text(name)
+                eleNick.append(eleTag)
+              }
+            }
+          }
+        })
+      }
+    })
+  })
+}
+
+let requestPermission = function() {
+
+}
+
 chrome.extension.sendMessage({
   type: 'setTabIcon',
   path: {
@@ -432,4 +521,17 @@ scripts.forEach(function (script) {
     url: chrome.extension.getURL('/' + script)
   })
 })
+
+//let helpPanel = function() {
+//  let shortcuts = tapdDefaultShortcuts.getShortcuts();
+//  for(let i=0; i<shortcuts.size(); i++) {
+//    let modalDiv = $('.modal-body')
+//    let secDiv = $('<div />').addClass('quickhelp')
+//    let keySpan = $('<span />').addClass('shortcut-key')
+//    let descSpan = $('<span />').addClass('shortcut-description')
+//    secDiv.append(keySpan)
+//  }
+//}
+
+
 

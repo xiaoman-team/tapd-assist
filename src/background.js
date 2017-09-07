@@ -27,9 +27,24 @@ chrome.extension.onRequest.addListener(function (request, sender, sendResponse) 
       })
       break
     }
+    case 'postRequest': {
+      let data = request.data
+      $.ajax({
+        type: data.type,
+        url: data.url,
+        data: JSON.stringify(data.data),
+        dataType: data.dataType,
+        contentType: data.contentType,
+        success: function(response){
+          sendResponse(response)
+        }
+      })
+      break
+    }
     default: {
       console.log('[tapd_assist] unknown request', request.cmd, request)
       break
     }
   }
 })
+

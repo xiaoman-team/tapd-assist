@@ -2,6 +2,7 @@ let tapdDefaultOptions = [
   {
     title: '驱动键',
     id: 'driver',
+    type: 'select',
     options: [
       {
         value: 'alt',
@@ -28,6 +29,7 @@ let tapdDefaultOptions = [
   {
     title: '项目跳转驱动键',
     id: 'project_driver',
+    type: 'select',
     options: [
       {
         value: 'alt',
@@ -49,6 +51,7 @@ let tapdDefaultOptions = [
   {
     title: '项目列表排序',
     id: 'project_list_order',
+    type: 'select',
     options: [
       {
         value: 'default',
@@ -61,6 +64,13 @@ let tapdDefaultOptions = [
         description: '按照项目ID倒序重新排列项目列表'
       }
     ]
+  },
+  {
+    title: '外部API',
+    id: 'external_api',
+    type: 'text_box',
+    value: '',
+    description: '在某些功能点会被调用的接口URL'
   }
 ]
 
@@ -166,7 +176,12 @@ let tapdAssistOption = {
       let local = result.localOptions
 
       for (let item of tapdDefaultOptions) {
-        let key = (local && local[item.id]) || item.options[0].value
+        let key
+        if(item.type === 'select') {
+          key = (local && local[item.id]) || item.options[0].value
+        } else if(item.type === 'text_box') {
+          key = (local && local[item.id]) || item.value
+        }
         shortcutsMap.set(item.id, key)
       }
 
