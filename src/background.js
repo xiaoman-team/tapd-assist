@@ -27,7 +27,7 @@ chrome.extension.onRequest.addListener(function (request, sender, sendResponse) 
       })
       break
     }
-    case 'postRequest': {
+    case 'httpRequest': {
       let data = request.data
       $.ajax({
         type: data.type,
