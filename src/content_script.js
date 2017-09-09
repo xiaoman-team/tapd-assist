@@ -464,7 +464,9 @@ let markingLeaveMember = function() {
     }, function (response) {
       let {
         code,
-        data: users
+        data: {
+          users
+        }
       } = response
       if (code !== 0) {
         console.error('server response error code', code, response)
