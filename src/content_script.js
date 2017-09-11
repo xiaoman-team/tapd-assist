@@ -44,8 +44,8 @@ bodyDOMObserver.observe(document.body, {
 
 $('.comment_con_main').toArray().forEach(tapdAssistUtils.patchURLLink)
 
-let loadHelpPanel = function(d, callback){
-  let data = $(d)
+let loadHelpPanel = function(result, callback){
+  let data = $(result)
   tapdAssistOption.getShortcuts().then(function(shortcuts){
     let titleDive = data.find('.modal-title')
     let modalDiv = $('<div />').addClass('modal-body')
@@ -494,7 +494,7 @@ let markingLeaveMember = function() {
     }
 
     chrome.extension.sendRequest({
-      cmd: 'postRequest',
+      cmd: 'httpRequest',
       data: {
         type: 'POST',
         url: url,
@@ -503,38 +503,57 @@ let markingLeaveMember = function() {
         contentType: 'application/json'
       }
     }, function (response) {
-      if(response.code == 0 && response.data !== undefined) {
-        let users = response.data
-        rows.each(function(){
-          let eleNick = $(this).find('.member-user-nick')
-          let nickText = eleNick.text().trim()
-
-          for (let item of users) {
-            for(let tag of item.tags) {
-              if(!tag) break
-              else if (item.nick === nickText && tag.value === 'leave' && tag.rowStyle !== undefined) {
-                //console.log(nickText)
-                let {rowStyle} = tag
-                for (let key in rowStyle) {
-                  this.style[key] = rowStyle[key]
-                }
-
-                let eleTag = $('<span></span>')
-                eleTag.css({
-                  fontSize: '12px',
-                  padding: '2px 5px',
-                  marginLeft: '5px'
-                })
-                let {style} = tag
-                eleTag.css(style)
-                let {name} = tag
-                eleTag.text(name)
-                eleNick.append(eleTag)
-              }
-            }
-          }
-        })
+      let {
+        code,
+        data: {
+          users
+        }
+      } = response
+      if (code !== 0) {
+        console.error('server response error code', code, response)
+        return
       }
+      if (!users) {
+        console.error('invalid data', users, response)
+        return
+      }
+      rows.each(function(){
+        let row = $(this)
+        let eleNick = row.find('.member-user-nick')
+        let nickText = eleNick.text().trim()
+
+        let user = users.find(user => user.nick === nickText)
+        if (!user) {
+          console.warn('user not found', nickText)
+          return
+        }
+        let {
+          tags = []
+        } = user
+        for(let tag of tags) {
+          let {
+            name,
+            style,
+            rowStyle
+          } = tag
+
+          let eleTag = $('<span></span>')
+          eleTag.css({
+            fontSize: '10px',
+            padding: '2px 5px',
+            marginLeft: '5px'
+          })
+          if (style) {
+            eleTag.css(style)
+          }
+          eleTag.text(name)
+          eleNick.append(eleTag)
+
+          if (rowStyle) {
+            row.css(rowStyle)
+          }
+        }
+      })
     })
   })
 }

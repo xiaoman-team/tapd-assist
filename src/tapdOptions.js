@@ -108,13 +108,13 @@ let tapdDefaultShortcuts = [
   {
     title: '跳转到上一页',
     key: 'prev_page',
-    value: 'Alt+L',
+    value: 'Alt+H',
     description: ''
   },
   {
     title: '跳转到下一页',
     key: 'next_page',
-    value: 'Alt+H',
+    value: 'Alt+L',
     description: ''
   },
   {
