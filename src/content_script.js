@@ -44,28 +44,69 @@ bodyDOMObserver.observe(document.body, {
 
 $('.comment_con_main').toArray().forEach(tapdAssistUtils.patchURLLink)
 
+let loadHelpPanel = function(d, callback){
+  let data = $(d)
+  tapdAssistOption.getShortcuts().then(function(shortcuts){
+    let titleDive = data.find('.modal-title')
+    let modalDiv = $('<div />').addClass('modal-body')
+    for(let key of shortcuts.keys()) {
+      if(key === 'external_api' || key === 'project_list_order') continue
+
+      let value
+      let description
+      if(key === 'driver' || key === 'project_driver') {
+        for (let item of tapdDefaultOptions) {
+          if(item.id === key) {
+            for(let option of item.options) {
+              if (option.value ===shortcuts.get(key)) {
+                value = option.text
+                description = option.description
+              }
+            }
+          }
+        }
+      } else {
+        value = shortcuts.get(key)
+        for (let item of tapdDefaultShortcuts) {
+          if(item.key === key) {
+            description = item.title
+          }
+        }
+
+      }
+
+      let secDiv = $('<div />').addClass('quickhelp')
+      let keySpan = $('<span />').addClass('shortcut-key')
+      console.log('key: ' + key)
+      console.log('value: ' + value)
+      let kbd = $('<kbd />').text(value)
+      keySpan.append(kbd)
+      secDiv.append(keySpan)
+      let descSpan = $('<span />').addClass('shortcut-description').text(description)
+      secDiv.append(descSpan)
+      modalDiv.append(secDiv)
+    }
+    modalDiv.insertAfter(titleDive)
+    callback(data)
+  })
+}
+
 let dialog
 chrome.extension.sendRequest({
   cmd: 'readFile',
   url: chrome.extension.getURL('tpls/help_panel.tpl'),
-}, function (data) {
-  //let data = $(data)
-  //let shortcuts = tapdDefaultShortcuts.getShortcuts();
-  //for(let i=0; i<shortcuts.size(); i++) {
-  //  let modalDiv = data.find('.modal-body')
-  //  let secDiv = $('<div />').addClass('quickhelp')
-  //  let keySpan = $('<span />').addClass('shortcut-key')
-  //  let descSpan = $('<span />').addClass('shortcut-description')
-  //  secDiv.append(keySpan)
-  //}
+}, function (result) {
   let div = $('<div />')
-  div.html(data)
-  dialog = div.find('#tapdAssistHelpPanel')
-  dialog.hide()
-  dialog.on('click.closeModal', '[data-dismiss="modal"]', function () {
-    dialog.hide()
+  loadHelpPanel(result, function(modifiedData){
+      div.html(modifiedData)
+      dialog = div.find('#tapdAssistHelpPanel')
+      dialog.hide()
+      dialog.on('click.closeModal', '[data-dismiss="modal"]', function () {
+        dialog.hide()
+      })
+      $('body').append(dialog)
   })
-  $('body').append(dialog)
+
 })
 
 let menuLock = false
@@ -521,17 +562,6 @@ scripts.forEach(function (script) {
     url: chrome.extension.getURL('/' + script)
   })
 })
-
-//let helpPanel = function() {
-//  let shortcuts = tapdDefaultShortcuts.getShortcuts();
-//  for(let i=0; i<shortcuts.size(); i++) {
-//    let modalDiv = $('.modal-body')
-//    let secDiv = $('<div />').addClass('quickhelp')
-//    let keySpan = $('<span />').addClass('shortcut-key')
-//    let descSpan = $('<span />').addClass('shortcut-description')
-//    secDiv.append(keySpan)
-//  }
-//}
 
 
 

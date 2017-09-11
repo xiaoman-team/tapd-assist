@@ -90,17 +90,13 @@ let saveOptions = (opts = {}) => {
         console.log('api value is not exsit，but have local api')
         console.log('local: ' + localApi)
         removePermission(localApi)
-        chrome.storage.local.set({
-          localOptions: options
-        }, function () {
-          status.text(end)
-          status.fadeOut(800)
-        })
-      } else {
-        console.log('api value is not exsit,local api is not exist')
+      }
+      chrome.storage.local.set({
+        localOptions: options
+      }, function () {
         status.text(end)
         status.fadeOut(800)
-      }
+      })
     })
   } else {
     console.log('api value is exist')
@@ -118,13 +114,6 @@ let saveOptions = (opts = {}) => {
     })
 
   }
-
-  //chrome.storage.local.set({
-  //  localOptions: options
-  //}, function () {
-  //  status.text(end)
-  //  status.fadeOut(800)
-  //})
 }
 
 let restore_options = () => {
@@ -263,23 +252,22 @@ let setPermission = function(api, callback) {
 let removePermission = function() {
   getLocalApi().then(function(data){
     let localApi = data.get('api')
-    if(!localApi)
-    return
-
-    chrome.permissions.remove({
-      permissions: [],
-      origins: [localApi]
-    }, function(removed) {
-      if (removed) {
-        // The permissions have been removed.
-        $('#external_api').val('')
-        console.log('removed')
-        checkPermission(localApi)
-      } else {
-        flag = 0
-        console.log('remove failed')
-      }
-    });
+    if(localApi) {
+      chrome.permissions.remove({
+        permissions: [],
+        origins: [localApi]
+      }, function(removed) {
+        if (removed) {
+          // The permissions have been removed.
+          $('#external_api').val('')
+          console.log('removed')
+          checkPermission(localApi)
+        } else {
+          flag = 0
+          console.log('remove failed')
+        }
+      })
+    }
   })
 
 }
