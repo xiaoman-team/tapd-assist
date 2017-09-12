@@ -30,6 +30,9 @@ let tapdDefaultOptions = [
     title: '项目跳转驱动键',
     id: 'project_driver',
     type: 'select',
+    helpTitle (value) {
+      return `${value}+Num`
+    },
     options: [
       {
         value: 'alt',

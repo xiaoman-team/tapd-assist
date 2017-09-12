@@ -52,27 +52,28 @@ let loadHelpPanel = function(result, callback){
     for(let key of shortcuts.keys()) {
       if(key === 'external_api' || key === 'project_list_order') continue
 
-      let value
+      let value = shortcuts.get(key)
       let description
-      if(key === 'driver' || key === 'project_driver') {
-        for (let item of tapdDefaultOptions) {
-          if(item.id === key) {
-            for(let option of item.options) {
-              if (option.value ===shortcuts.get(key)) {
-                value = option.text
-                description = option.description
-              }
-            }
+      let helpTitle
+      if(['driver', 'project_driver'].indexOf(key) >= 0) {
+        let select = tapdDefaultOptions.find(item => item.id === key)
+        if (select) {
+          helpTitle = select.helpTitle
+          let option = select.options.find(item => item.value === value)
+          if (option) {
+            value = option.text
+            description = option.description
           }
         }
       } else {
-        value = shortcuts.get(key)
-        for (let item of tapdDefaultShortcuts) {
-          if(item.key === key) {
-            description = item.title
-          }
+        let shortcut = tapdDefaultShortcuts.find(item => item.key === key)
+        if (shortcut) {
+          helpTitle = shortcut.helpTitle
+          description = shortcut.title
         }
-
+      }
+      if (helpTitle) {
+        value = helpTitle(value)
       }
 
       let secDiv = $('<div />').addClass('quickhelp')
