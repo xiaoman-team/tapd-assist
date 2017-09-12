@@ -491,6 +491,7 @@ let tagMemberList = function() {
       }
     }
 
+    $('.organization-name').append('<i class="loading"></i>')
     chrome.extension.sendRequest({
       cmd: 'httpRequest',
       data: {
@@ -515,6 +516,7 @@ let tagMemberList = function() {
         console.error('invalid data', users, response)
         return
       }
+      $('.organization-name').find('.loading').remove()
       rows.each(function(){
         let row = $(this)
         let eleNick = row.find('.member-user-nick')
