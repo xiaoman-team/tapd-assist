@@ -70,7 +70,8 @@ let tapdDefaultOptions = [
     id: 'external_api',
     type: 'text_box',
     value: '',
-    description: '在某些功能点会被调用的接口URL'
+    description: '在某些功能点会被调用的接口URL',
+    detailLink: 'https://github.com/asinbow/tapd-assist/wiki/External-API'
   }
 ]
 

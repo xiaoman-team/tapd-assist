@@ -150,9 +150,14 @@ let restore_options = () => {
 
       } else if(type === 'text_box') {
         let value = (local && local[id]) || item.value
-        console.log(value)
         let textBox = $('<input>').attr({id: id, class: 'option_value'}).val(value)
         eleOptionDiv.append(textBox)
+
+        let link =  item.detailLink;
+        if(link) {
+          let eleLink = $('<a></a>').attr({href: link, target: '_blank', class: 'explain_links'}).text('了解更多')
+          eleLink.insertAfter(textBox)
+        }
 
         let description = item.description
         let eleDescDiv = $('<div></div>').attr('class', 'desc').text(description)

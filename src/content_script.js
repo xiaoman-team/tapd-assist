@@ -32,7 +32,7 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       tapdAssistUtils.patchFullscreenButton()
       ensureListenDocumentKeyEvents()
     } else if (mutation.target.id === 'member_list_content' && mutation.addedNodes.length) {
-      markingLeaveMember()
+      tagMemberList()
     }
   })
 })
@@ -77,8 +77,6 @@ let loadHelpPanel = function(result, callback){
 
       let secDiv = $('<div />').addClass('quickhelp')
       let keySpan = $('<span />').addClass('shortcut-key')
-      console.log('key: ' + key)
-      console.log('value: ' + value)
       let kbd = $('<kbd />').text(value)
       keySpan.append(kbd)
       secDiv.append(keySpan)
@@ -464,7 +462,7 @@ ensureListenDocumentKeyEvents()
 
 // bodyDOMObserver.disconnect()
 
-let markingLeaveMember = function() {
+let tagMemberList = function() {
   let row = $('.list-action-table tbody tr')
   tapdAssistOption.getShortcuts().then(function(data){
     let url = data.get('external_api')
