@@ -80,7 +80,7 @@ let tapdDefaultOptions = [
 
 let tapdDefaultShortcuts = [
   {
-    title: '编辑需求或缺陷',
+    title: '编辑需求、缺陷或任务',
     key: 'edit_story',
     value: 'Alt+E',
     description: '也可用于退出当前编辑'

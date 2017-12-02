@@ -170,10 +170,12 @@ tapdAssistOption.getShortcuts().then(function (data) {
     },
     [editStoryBug]: function (e) {
       let buttons = {
-        '#edit_story_btn': '正在跳转需求编辑...',
-        '#edit_bug': '正在跳转缺陷编辑...',
-        '#btn_cancel_edit': '正在退出需求编辑...',
-        '#id-tapd-toolbar #cancle': '正在退出缺陷编辑...'
+        '#edit_story_btn': '编辑需求',
+        '#edit_bug': '编辑缺陷',
+        '#edit_task': '编辑任务',
+        '#btn_cancel_edit': '退出需求编辑',
+        '#id-tapd-toolbar #cancle': '退出缺陷编辑',
+        '#id-tapd-toolbar a.btn:contains(取消)': '退出任务编辑'
       }
       for (let key in buttons) {
         let text = buttons[key]
