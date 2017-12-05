@@ -38,7 +38,7 @@ select {
   margin: 0;
 }
 
-#external_api {
+#user_link, #external_api {
   outline: none;
   width: 300px;
 }

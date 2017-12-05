@@ -3,6 +3,7 @@ tapdAssistUtils.patchComments()
 tapdAssistUtils.patchFullscreenEditButton()
 tapdAssistUtils.patchFullscreenButton()
 tapdAssistUtils.patchEditButton()
+tapdAssistUtils.patchUserLink()
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 
@@ -33,6 +34,8 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       ensureListenDocumentKeyEvents()
     } else if (mutation.target.id === 'member_list_content' && mutation.addedNodes.length) {
       tagMemberList()
+    } else if (mutation.target.getAttribute('data-editable') === 'pinyinuserchooser') {
+      tapdAssistUtils.patchUserLink(mutation.target)
     }
   })
 })
@@ -50,7 +53,13 @@ let loadHelpPanel = function(result, callback){
     let titleDive = data.find('.modal-title')
     let modalDiv = $('<div />').addClass('modal-body')
     for(let key of shortcuts.keys()) {
-      if(key === 'external_api' || key === 'project_list_order') continue
+      if([
+          'user_link',
+          'external_api',
+          'project_list_order'
+        ].indexOf(key) >= 0) {
+        continue
+      }
 
       let value = shortcuts.get(key)
       let description

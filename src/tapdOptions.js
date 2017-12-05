@@ -69,6 +69,14 @@ let tapdDefaultOptions = [
     ]
   },
   {
+    title: '昵称链接',
+    id: 'user_link',
+    type: 'text_box',
+    value: 'xiaoman-message://utils/chat?nickname={{user}}',
+    description: '将每个昵称转换为一个链接',
+    detailLink: 'https://github.com/asinbow/tapd-assist/wiki/User-Link'
+  },
+  {
     title: '外部API',
     id: 'external_api',
     type: 'text_box',

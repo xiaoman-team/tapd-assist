@@ -347,6 +347,54 @@ let tapdAssistUtils = {
       $(key).prop('title', `${tapdAssistUtils.namePrefix}${text}(Alt+E)`)
     }
   },
+  patchUserLink: function (root) {
+    tapdAssistOption.getShortcuts().then(function(data) {
+      let userLink = data.get('user_link')
+      if (!userLink) {
+        console.warn('昵称链接没有设置')
+        return
+      }
+
+      let patchSingle = function (ele) {
+        ele = $(ele)
+        if (!ele.length) {
+          return
+        }
+        ele = ele.children('.editable-value')
+        if (ele.children().length) {
+          return // already patched
+        }
+        let text = ele.text()
+        if (!text) {
+          return // empty
+        }
+        let children = text.split(';').map(function (split) {
+          split = split.trim()
+          let url = userLink.replace('{{user}}', split)
+          return `<a href="${encodeURI(url)}">${split}</a>`
+        }).join(';')
+        ele.text('')
+
+        ele.append(children)
+      }
+
+      if (root) {
+        root = $(root)
+        let choosers = root.children('[data-editable=pinyinuserchooser]')
+        if (!choosers.length) {
+          choosers = root
+        }
+        choosers.toArray().forEach(patchSingle)
+        return
+      }
+
+      let choosers = $('[data-editable=pinyinuserchooser]')
+      choosers.toArray().forEach(patchSingle)
+
+      patchSingle($('#ContentCreatedBy'))
+      patchSingle($('#ContentCreator'))
+    })
+  },
   patchFullscreenEditButton: function () {
     let ele = $('[data-name=fullscreen]')[0]
     if (ele) {

@@ -73,18 +73,32 @@ let saveOptions = (opts = {}) => {
     let id = eleOptionValue.eq(i).attr('id')
     options[id] = eleOptionValue.eq(i).val()
   }
+  options['user_link'] = $('#user_link').val()
+  console.log('save', options)
 
   let api = $('#external_api').val()
-
-  console.log('save')
 
   for (let shortcut of eleShortcuts) {
     objShortcuts[shortcut.getAttribute('class')] = shortcut.value
   }
   options.shortcuts = objShortcuts
 
-  if(!api) {
-    getLocalApi().then(function(data){
+  if(api) {
+    console.log('api value is exist')
+    setPermission(api, function(flag) {
+      if(flag === 1) {
+        options['external_api'] = api
+
+        chrome.storage.local.set({
+          localOptions: options
+        }, function () {
+          status.text(end)
+          status.fadeOut(800)
+        })
+      }
+    })
+  } else {
+    getLocalApi().then(function(data) {
       let localApi = data.get('api')
       if(localApi) {
         console.log('api value is not exsit，but have local api')
@@ -98,20 +112,7 @@ let saveOptions = (opts = {}) => {
         status.fadeOut(800)
       })
     })
-  } else {
-    console.log('api value is exist')
-    setPermission(api, function(flag){
-      if(flag === 1) {
-        options['external_api'] = api
 
-        chrome.storage.local.set({
-          localOptions: options
-        }, function () {
-          status.text(end)
-          status.fadeOut(800)
-        })
-      }
-    })
 
   }
 }
@@ -119,7 +120,6 @@ let saveOptions = (opts = {}) => {
 let restore_options = () => {
   chrome.storage.local.get('localOptions', function (result) {
     let local = result.localOptions
-    console.log(local)
 
     for (let item of defaultOptions) {
       let id = item.id
@@ -268,7 +268,6 @@ let removePermission = function() {
           console.log('removed')
           checkPermission(localApi)
         } else {
-          flag = 0
           console.log('remove failed')
         }
       })
