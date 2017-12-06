@@ -368,13 +368,34 @@ let tapdAssistUtils = {
         if (!text) {
           return // empty
         }
-        let children = text.split(';').map(function (split) {
-          split = split.trim()
-          let url = userLink.replace('{{user}}', split)
-          return `<a href="${encodeURI(url)}">${split}</a>`
-        }).join(';')
         ele.text('')
 
+        let children = text.split(';').map(function (split, index, splits) {
+          split = split.trim()
+          let url = userLink.replace('{{user}}', split)
+
+          let a0 = document.createElement('a')
+          a0.textContent= split
+          a0.href = url
+          a0.style.display = 'none'
+
+          let a1 = document.createElement('a')
+          a1.textContent= split
+          a1.href = url
+          a1.addEventListener('click', function (e) {
+            e.preventDefault()
+            a0.click()
+          })
+
+          let elements = [a0, a1]
+          if (index < splits.length - 1) {
+            elements.push(';')
+          }
+
+          return elements
+        })
+
+        children = [].concat.apply([], children);
         ele.append(children)
       }
 
