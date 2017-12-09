@@ -34,7 +34,10 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       ensureListenDocumentKeyEvents()
     } else if (mutation.target.id === 'member_list_content' && mutation.addedNodes.length) {
       tagMemberList()
-    } else if (mutation.target.getAttribute('data-editable') === 'pinyinuserchooser') {
+    } else if (
+      mutation.target.getAttribute('data-editable') === 'pinyinuserchooser'
+      || (mutation.target.id === 'content_div' && mutation.addedNodes.length)
+    ) {
       tapdAssistUtils.patchUserLink(mutation.target)
     }
   })

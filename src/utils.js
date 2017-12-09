@@ -360,19 +360,41 @@ let tapdAssistUtils = {
         if (!ele.length) {
           return
         }
-        ele = ele.children('.editable-value')
+        ele = ele.find('.editable-value')
         if (ele.children().length) {
-          return // already patched
+          // console.warn('already patched', ele)
+          return
         }
-        let text = ele.text()
+        let text = ele.text().trim()
         if (!text) {
-          return // empty
+          // console.warn('empty', ele)
+          return
         }
         ele.text('')
 
+        let rowTitle = ''
+        let rowUrl = ''
+        let tr = ele.closest('tr')
+        if (tr.length) {
+          let a = tr.find('td .scissor a.editable-value').not('[href^=javascript]')[0]
+          if (a) {
+            rowTitle = a.title
+            rowUrl = a.href
+          }
+        } else {
+          let subjectTitle = $('.subject_title span.editable-value')
+          if (subjectTitle.length) {
+            rowTitle = subjectTitle.text().trim()
+            rowUrl = window.location.href
+          }
+        }
+
         let children = text.split(';').map(function (split, index, splits) {
           split = split.trim()
-          let url = userLink.replace('{{user}}', split)
+          let url = userLink
+            .replace('{{user}}', encodeURIComponent(split))
+            .replace('{{title}}', encodeURIComponent(rowTitle))
+            .replace('{{url}}', encodeURIComponent(rowUrl))
 
           let a0 = document.createElement('a')
           a0.textContent= split
@@ -401,7 +423,7 @@ let tapdAssistUtils = {
 
       if (root) {
         root = $(root)
-        let choosers = root.children('[data-editable=pinyinuserchooser]')
+        let choosers = root.find('[data-editable=pinyinuserchooser]')
         if (!choosers.length) {
           choosers = root
         }
@@ -414,6 +436,9 @@ let tapdAssistUtils = {
 
       patchSingle($('#ContentCreatedBy'))
       patchSingle($('#ContentCreator'))
+      patchSingle($('#ContentReporter'))
+      patchSingle($('#ContentCreator'))
+      patchSingle($('#ContentFixer'))
     })
   },
   patchFullscreenEditButton: function () {
