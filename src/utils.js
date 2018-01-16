@@ -365,6 +365,9 @@ let tapdAssistUtils = {
           // console.warn('already patched', ele)
           return
         }
+        if (ele.length > 1) {
+          return
+        }
         let text = ele.text().trim()
         if (!text) {
           // console.warn('empty', ele)
