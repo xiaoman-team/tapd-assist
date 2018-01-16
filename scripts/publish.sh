@@ -128,8 +128,8 @@ get_crx_download_url0() {
         -s \
         -D - \
         "https://clients2.google.com/service/update2/crx?response=redirect&prodversion=$CHROME_LEASE_VERSION&x=id%3D$EXTENSION_ID%26uc" | \
-        grep '^Location:' | \
-        sed 's/^Location:[ \t]*\(.*\)$/\1/'
+        grep '^[Ll]ocation:' | \
+        sed 's/^[Ll]ocation:[ \t]*\(.*\)$/\1/'
 }
 
 get_crx_download_url() {
