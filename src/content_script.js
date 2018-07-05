@@ -4,6 +4,7 @@ tapdAssistUtils.patchFullscreenEditButton()
 tapdAssistUtils.patchFullscreenButton()
 tapdAssistUtils.patchEditButton()
 tapdAssistUtils.patchUserLink()
+tapdAssistUtils.patchMarkdown()
 
 let PROJECT_SHORTCUTS = tapdAssistUtils.patchProjectList()
 
@@ -39,6 +40,12 @@ let bodyDOMObserver = new MutationObserver(function (mutations) {
       || (mutation.target.id === 'content_div' && mutation.addedNodes.length)
     ) {
       tapdAssistUtils.patchUserLink(mutation.target)
+    } else if (
+      $(mutation.target).hasClass('markdown-editor-wrap') && mutation.addedNodes.length
+    ) {
+      tapdAssistUtils.patchMarkdown(mutation.target)
+    } else {
+      // do nothing
     }
   })
 })

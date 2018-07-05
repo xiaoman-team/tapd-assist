@@ -69,6 +69,23 @@ let tapdDefaultOptions = [
     ]
   },
   {
+    title: 'Markdown布局',
+    id: 'markdown_layout',
+    type: 'select',
+    options: [
+      {
+        value: 'default',
+        text: '原生',
+        description: '左侧编辑，右侧展示'
+      },
+      {
+        value: 'editor_right',
+        text: '右侧编辑',
+        description: '右侧编辑，左侧展示'
+      }
+    ]
+  },
+  {
     title: '用户链接',
     id: 'user_link',
     type: 'text_box',

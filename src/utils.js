@@ -195,6 +195,87 @@ let tapdAssistUtils = {
 
     detectAndReplaceLink(root)
   },
+  patchMarkdown: function (root, operate = '') {
+    // operate = ''|'default'|'editor_right'|'toggle'
+    let patchSingle = function (root, operate = true) {
+      let editor = $(root).find('.markdown-editor')[0]
+      let content = $(root).find('.markdown-content-wrap')[0]
+
+      let loaded = editor && content
+      if (!loaded) {
+        return
+      }
+
+      let switchButton = $(root).find('.switch-markdown-layout')[0]
+      if (!switchButton) {
+        $(root).append(`
+<a class="switch-markdown-layout" title="交换编辑框">
+  <i class="font-editor font-editor-switchEditor"></i>
+</a>
+`)
+        switchButton = $(root).find('.switch-markdown-layout')[0]
+        $(switchButton).click(function () {
+          tapdAssistUtils.patchMarkdown(root, 'toggle')
+        })
+      }
+
+      let patched = $(root).hasClass('tapd-assist-markdown-patched')
+      if (patched === operate) {
+        return
+      }
+
+      if (operate) {
+        $(root).addClass('tapd-assist-markdown-patched')
+        content.parentNode.insertBefore(content, editor)
+      } else {
+        $(root).removeClass('tapd-assist-markdown-patched')
+        editor.parentNode.insertBefore(editor, content)
+      }
+    }
+
+    chrome.storage.local.get('localOptions', function (options) {
+      let localOptions = options.localOptions
+      let markdownLayout = localOptions.markdown_layout || 'default'
+      let newOperate
+      switch (operate) {
+        case '': {
+          newOperate = markdownLayout === 'editor_right'
+          break
+        }
+        case 'default': {
+          newOperate = false
+          break
+        }
+        case 'editor_right': {
+          newOperate = true
+          break
+        }
+        case 'toggle': {
+          newOperate = markdownLayout !== 'editor_right'
+          break
+        }
+        default: {
+          console.warn('unknown markdown path operation', operate)
+          return
+          // break
+        }
+      }
+
+      let newMarkdownLayout = newOperate ? 'editor_right': 'default'
+      if (newMarkdownLayout !== markdownLayout) {
+        localOptions.markdown_layout = newMarkdownLayout
+        chrome.storage.local.set({
+          localOptions
+        }, function () {
+        })
+      }
+
+      root = root ? $(root) : $('.markdown-editor-wrap')
+      root.toArray().forEach(function (ele) {
+        patchSingle(ele, newOperate)
+      })
+    });
+  },
   patchZoom: function (ele) {
     if (ele.getAttribute('tapd-assist-zoom')) {
       return
