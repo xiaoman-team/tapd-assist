@@ -239,9 +239,14 @@ img.tapd-assist-original {
   right: 60px;
 }
 
+.markdown-editor-wrap .markdown-content-wrap {
+  background-color: #fbfbfb;
+  height: calc(100% - 29px);
+}
+
 .markdown-editor-wrap.tapd-assist-markdown-patched .markdown-content-wrap {
   left: 0;
-  width: 49.9%;
+  width: calc(50% - 1px);
   border-right: 1px solid #cdd0d1;
 }
 
