@@ -265,3 +265,26 @@ img.tapd-assist-original {
   right: -28px;
   font-size: 18px;
 }
+
+.markdown-editor-wrap .markdown-splitter {
+  position: absolute;
+  top: 29px;
+  bottom: 0;
+  width: 4px;
+  left: calc(55%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f3f3f3;
+  cursor: col-resize;
+}
+
+.markdown-editor-wrap .markdown-splitter .markdown-splitter-dot {
+  position: relative;
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background: #ddd;
+  margin: 2px 0;
+}

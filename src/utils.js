@@ -201,7 +201,7 @@ let tapdAssistUtils = {
   },
   patchMarkdown: function (root, operate = '') {
     // operate = ''|'default'|'editor_right'|'toggle'
-    let patchSingle = function (root, operate = true) {
+    let patchLayout = function (root, operate = true) {
       let editor = $(root).find('.markdown-editor')[0]
       let content = $(root).find('.markdown-content-wrap')[0]
 
@@ -234,6 +234,99 @@ let tapdAssistUtils = {
       } else {
         $(root).removeClass('tapd-assist-markdown-patched')
         editor.parentNode.insertBefore(editor, content)
+      }
+    }
+
+    let patchSplitter = function (root, operate = true) {
+      let editor = $(root).find('.markdown-editor')[0]
+      let content = $(root).find('.markdown-content-wrap')[0]
+
+      let loaded = editor && content
+      if (!loaded) {
+        return
+      }
+
+      let getValidProportion = function (p) {
+        const proportionMin = 0.1
+        const proportionMax = 0.9
+        if (p < proportionMin) {
+          p = proportionMin
+        }
+        if (p > proportionMax) {
+          p = proportionMax
+        }
+        return p
+      }
+
+      let getDimensions = function () {
+        let contentWidth = $(content).width()
+        let editorWidth = $(editor).width()
+        let total = contentWidth + editorWidth + 1
+        let left = operate ? (contentWidth + 1) : editorWidth
+
+        return {
+          total,
+          left,
+          leftProportion: left / total,
+          proportion: editorWidth / total
+        }
+      }
+
+      let proportion = getValidProportion(parseFloat(localStorage.tapdAssistMarkdownEditorProportion) || 0.45)
+      patchWidth(content, editor, operate, proportion)
+
+      let markdownSplitter = $(root).find('.markdown-splitter')[0]
+      if (!markdownSplitter) {
+        $(root).append(`
+<div class="markdown-splitter">
+  <div class="markdown-splitter-dot"></div>
+  <div class="markdown-splitter-dot"></div>
+  <div class="markdown-splitter-dot"></div>
+</div>
+`)
+        markdownSplitter = $(root).find('.markdown-splitter')[0]
+        markdownSplitter.addEventListener('mousedown', function (e) {
+          let onMouseMove = function (e) {
+            let left = dimensions.left + e.clientX - startX
+            let leftProportion = left / dimensions.total
+
+            let proportion = getValidProportion(operate ? (1 - leftProportion) : leftProportion)
+            leftProportion = operate ? (1 - proportion) : proportion
+
+            markdownSplitter.style.left = `calc(${(leftProportion * 100).toFixed(3)}%)`
+            patchWidth(content, editor, operate, proportion)
+          }
+          let onMouseUp = function (e) {
+            window.removeEventListener('mousemove', onMouseMove)
+            window.removeEventListener('mouseup', onMouseUp)
+
+            let dimensions = getDimensions()
+            localStorage.tapdAssistMarkdownEditorProportion = dimensions.proportion
+          }
+
+          let dimensions = getDimensions()
+          let startX = e.clientX
+
+          window.addEventListener('mousemove', onMouseMove)
+          window.addEventListener('mouseup', onMouseUp)
+        });
+      }
+      let dimensions = getDimensions()
+      markdownSplitter.style.left = `calc(${(dimensions.leftProportion * 100).toFixed(3)}%)`
+    }
+
+    let patchWidth = function (content, editor, operate, proportion) {
+      let percentage = (proportion * 100).toFixed(3);
+      if (operate) {
+        content.style.width = `calc(100% - ${percentage}% - 1px)`
+        content.style.left = `0`
+        editor.style.width = `${percentage}%`
+        editor.style.left = `calc(100% - ${percentage}%)`
+      } else {
+        content.style.width = `calc(100% - ${percentage}% - 1px)`
+        content.style.left = `${percentage}%`
+        editor.style.width = `${percentage}%`
+        editor.style.left = `0`
       }
     }
 
@@ -276,7 +369,8 @@ let tapdAssistUtils = {
 
       root = root ? $(root) : $('.markdown-editor-wrap')
       root.toArray().forEach(function (ele) {
-        patchSingle(ele, newOperate)
+        patchLayout(ele, newOperate)
+        patchSplitter(ele, newOperate)
       })
     });
   },
