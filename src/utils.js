@@ -23,6 +23,10 @@ let tapdAssistUtils = {
     if (m) {
       return m[1]
     }
+    let a = $('#workspace_list_ul .current a[workspace_id]')[0]
+    if (a) {
+      return a.getAttribute('workspace_id')
+    }
   },
   getProjectUrl: function (path) {
     let projectId = tapdAssistUtils.getProjectId()
