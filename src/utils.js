@@ -259,12 +259,14 @@ let tapdAssistUtils = {
       }
 
       let getDimensions = function () {
+        let patched = $(root).hasClass('tapd-assist-markdown-patched')
         let contentWidth = $(content).width()
         let editorWidth = $(editor).width()
         let total = contentWidth + editorWidth + 1
-        let left = operate ? (contentWidth + 1) : editorWidth
+        let left = patched ? (contentWidth + 1) : editorWidth
 
         return {
+          patched,
           total,
           left,
           leftProportion: left / total,
@@ -287,14 +289,16 @@ let tapdAssistUtils = {
         markdownSplitter = $(root).find('.markdown-splitter')[0]
         markdownSplitter.addEventListener('mousedown', function (e) {
           let onMouseMove = function (e) {
+            let newDimensions = getDimensions()
+            let patched = newDimensions.patched
             let left = dimensions.left + e.clientX - startX
             let leftProportion = left / dimensions.total
 
-            let proportion = getValidProportion(operate ? (1 - leftProportion) : leftProportion)
-            leftProportion = operate ? (1 - proportion) : proportion
+            let proportion = getValidProportion(patched ? (1 - leftProportion) : leftProportion)
+            leftProportion = patched ? (1 - proportion) : proportion
 
             markdownSplitter.style.left = `calc(${(leftProportion * 100).toFixed(3)}%)`
-            patchWidth(content, editor, operate, proportion)
+            patchWidth(content, editor, patched, proportion)
           }
           let onMouseUp = function (e) {
             window.removeEventListener('mousemove', onMouseMove)
