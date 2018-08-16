@@ -288,3 +288,7 @@ img.tapd-assist-original {
   background: #ddd;
   margin: 2px 0;
 }
+
+.markdown-editor-wrap .markdown-editor textarea {
+  font-family: monospace;
+}
