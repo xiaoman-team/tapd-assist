@@ -29,8 +29,7 @@ Chrome extension for [TAPD](http://www.tapd.cn/)
 
 ### TODO
 
-* after click `#btn_update_exit`, clean empty `<a>` in editor
-* configurable shortcuts
+* table editor feature in markdown like <https://atom.io/packages/markdown-table-editor>
 
 
 ### 路线图Roadmap:
