@@ -335,7 +335,7 @@ let tapdAssistUtils = {
     }
 
     chrome.storage.local.get('localOptions', function (options) {
-      let localOptions = options.localOptions
+      let localOptions = options.localOptions || {}
       let markdownLayout = localOptions.markdown_layout || 'default'
       let newOperate
       switch (operate) {
