@@ -159,6 +159,12 @@ let tapdDefaultShortcuts = [
     description: ''
   },
   {
+    title: '打开迭代列表',
+    key: 'open_iterations',
+    value: 'Alt+T',
+    description: ''
+  },
+  {
     title: '打开消息中心',
     key: 'open_message',
     value: 'Alt+N',

@@ -219,6 +219,7 @@ let transform = (key) => {
 let SHORTCUTS
 tapdAssistOption.getShortcuts().then(function (data) {
   let driver = data.get('driver')
+  let iterations = data.get('open_iterations')
   let workBench = data.get('open_workbench')
   let message = data.get('open_message')
   let memberList = data.get('member_list')
@@ -238,6 +239,16 @@ tapdAssistOption.getShortcuts().then(function (data) {
   let zoomOut = transform(data.get('zoom_out'))
 
   SHORTCUTS = {
+    [iterations]: function () {
+      let projectId = tapdAssistUtils.getProjectId()
+      if (!projectId) {
+        tapdAssistUtils.showFlash('❌ 当前不是项目页面')
+        return
+      }
+
+      tapdAssistUtils.showFlash('正在跳转迭代列表...')
+      window.location.href = tapdAssistUtils.getProjectUrl('/prong/iterations')
+    },
     [workBench]: {
       target: '#top_nav_worktable',
       description: '正在跳转工作台...'
