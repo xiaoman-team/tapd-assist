@@ -159,6 +159,7 @@ tapdAssistOption.getShortcuts().then(function (data) {
   let bugReport = data.get('recent_bug_report')
   let prevPage = data.get('prev_page')
   let nextPage = data.get('next_page')
+  let logout = data.get('logout')
   let search = data.get('search')
   // let createProject = data.get('create_project')
   let fullScreen = data.get('full_screen')
@@ -290,6 +291,9 @@ tapdAssistOption.getShortcuts().then(function (data) {
         tapdAssistUtils.showFlash('跳转到下一页️➡ ...')
         element1.click()
       }
+    },
+    [logout]: function () {
+      window.location.href = '/users/logout'
     },
     [search]: function (e) {
       e.preventDefault()

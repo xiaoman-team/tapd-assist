@@ -147,6 +147,12 @@ let tapdDefaultShortcuts = [
     description: ''
   },
   {
+    title: '退出重登陆',
+    key: 'logout',
+    value: 'Alt+Q',
+    description: ''
+  },
+  {
     title: '打开工作台',
     key: 'open_workbench',
     value: 'Alt+W',
