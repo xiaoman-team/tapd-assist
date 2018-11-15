@@ -137,9 +137,12 @@
 }
 
 .modal .modal-body {
+  padding: 28px 20px 21px;
+}
+
+.modal .quick-help-group {
   display: -webkit-box;
   display: flex;
-  padding: 28px 20px 21px;
   -webkit-box-align: center;
   align-items: center;
   justify-content: center;
@@ -150,9 +153,8 @@
 .modal .quickhelp {
   display: -webkit-box;
   display: flex;
-  width: 120px;
-  height: 100px;
-  margin-right: 20px;
+  width: 100px;
+  height: 80px;
   text-align: center;
   cursor: pointer;
   -webkit-box-orient: vertical;
@@ -162,7 +164,7 @@
   align-items: center;
   -webkit-box-pack: center;
   justify-content: center;
-  padding: 12px;
+  padding: 10px;
 }
 
 .modal .quickhelp:hover {
@@ -180,7 +182,7 @@
   margin: 2px;
   padding: 2px 4px;
   white-space: pre-wrap;
-  font-size: 24px;
+  font-size: 18px;
   font-family: sans-serif;
   color: white;
   background-color: transparent;
@@ -190,6 +192,69 @@
 .modal .shortcut-description {
   display: block;
   color: rgba(0,0,0,.57);
+}
+
+.modal .account-group {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.modal .account-group .account {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid #e5e5e5;
+  padding: 10px 14px;
+  margin-right: 6px;
+}
+
+.modal .account-group .account:hover {
+  background-color: rgb(249, 249, 249);
+}
+
+.modal .account-group .account.account-current {
+  background-color: rgb(249, 249, 249);
+  border: 1px dashed #e5e5e5;
+  cursor: default;
+}
+
+
+.modal .account-group .account .account-title {
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.87);
+  padding: 0 8px 0 8px;
+  margin-right: 12px;
+}
+
+.modal .account-group .account .account-remove {
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.modal .account-group .account .account-remove:hover {
+  color: rgba(245, 34, 45, 0.56);
+  font-weight: bold;
+}
+
+.modal .account-group .account-add {
+  display: inline-block;
+  font-size: 18px;
+  line-height: 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1px solid #e5e5e5;
+  padding: 10px 14px;
+  margin-left: 20px;
+}
+.modal .account-group .account-add:hover {
+  color: #1890ff;
+  font-weight: bold;
 }
 
 .tapd-assist-fullscreen-element {

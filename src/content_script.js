@@ -57,65 +57,132 @@ bodyDOMObserver.observe(document.body, {
 
 $('.comment_con_main').toArray().forEach(tapdAssistUtils.patchURLLink)
 
-let loadHelpPanel = function(result, callback){
-  let data = $(result)
+let loadHelpPanel = function(tpl, callback) {
+  let data = $(tpl)
   tapdAssistOption.getShortcuts().then(function(shortcuts){
-    let titleDive = data.find('.modal-title')
-    let modalDiv = $('<div />').addClass('modal-body')
-    for(let key of shortcuts.keys()) {
-      if([
+    chrome.extension.sendRequest({
+      cmd: 'getTapdAccount'
+    }, function (tapdAccount) {
+      let accounts = tapdAccount.accounts
+
+      let titleDive = data.find('.modal-title')
+      let modalBodyDiv = $('<div />').addClass('modal-body')
+      let quickHelpGroupDiv = $('<div />').addClass('quick-help-group')
+      modalBodyDiv.append(quickHelpGroupDiv)
+      for (let key of shortcuts.keys()) {
+        if ([
           'user_link',
           'external_api',
-          'project_list_order'
+          'project_list_order',
+          'markdown_layout'
         ].indexOf(key) >= 0) {
-        continue
-      }
+          continue
+        }
 
-      let value = shortcuts.get(key)
-      let description
-      let helpTitle
-      if(['driver', 'project_driver'].indexOf(key) >= 0) {
-        let select = tapdDefaultOptions.find(item => item.id === key)
-        if (select) {
-          helpTitle = select.helpTitle
-          let option = select.options.find(item => item.value === value)
-          if (option) {
-            value = option.text
-            description = option.description
+        let value = shortcuts.get(key)
+        let description
+        let helpTitle
+        if (['driver', 'project_driver'].indexOf(key) >= 0) {
+          let select = tapdDefaultOptions.find(item => item.id === key)
+          if (select) {
+            helpTitle = select.helpTitle
+            let option = select.options.find(item => item.value === value)
+            if (option) {
+              value = option.text
+              description = option.description
+            }
+          }
+        } else {
+          let shortcut = tapdDefaultShortcuts.find(item => item.key === key)
+          if (shortcut) {
+            helpTitle = shortcut.helpTitle
+            description = shortcut.title
           }
         }
-      } else {
-        let shortcut = tapdDefaultShortcuts.find(item => item.key === key)
-        if (shortcut) {
-          helpTitle = shortcut.helpTitle
-          description = shortcut.title
+        if (helpTitle) {
+          value = helpTitle(value)
         }
-      }
-      if (helpTitle) {
-        value = helpTitle(value)
+
+        let secDiv = $('<div />').addClass('quickhelp')
+        let keySpan = $('<span />').addClass('shortcut-key')
+        let kbd = $('<kbd />').text(value)
+        keySpan.append(kbd)
+        secDiv.append(keySpan)
+        let descSpan = $('<span />').addClass('shortcut-description').text(description)
+        secDiv.append(descSpan)
+        quickHelpGroupDiv.append(secDiv)
       }
 
-      let secDiv = $('<div />').addClass('quickhelp')
-      let keySpan = $('<span />').addClass('shortcut-key')
-      let kbd = $('<kbd />').text(value)
-      keySpan.append(kbd)
-      secDiv.append(keySpan)
-      let descSpan = $('<span />').addClass('shortcut-description').text(description)
-      secDiv.append(descSpan)
-      modalDiv.append(secDiv)
-    }
-    modalDiv.insertAfter(titleDive)
-    callback(data)
+      let accountGroupDiv = $('<div />').addClass('account-group')
+      modalBodyDiv.append(accountGroupDiv)
+      for (let account of accounts) {
+        let accountDiv = $('<div />').addClass('account')
+        let current = tapdAccount.currentAccount === account.uid
+        if (current) {
+          accountDiv.addClass('account-current')
+        }
+
+        let accountTitleDiv = $('<div />').addClass('account-title')
+        accountTitleDiv.text(account.name + '(' + account.uid + ')')
+        accountDiv.append(accountTitleDiv)
+        
+        if (!current) {
+          let accountRemoveDiv = $('<div />').addClass('account-remove')
+          accountRemoveDiv.html('&times;')
+          accountDiv.append(accountRemoveDiv)
+          accountRemoveDiv.click(function (e) {
+            e.stopImmediatePropagation()
+            chrome.extension.sendRequest({
+              cmd: 'removeLoginAccount',
+              uid: account.uid
+            }, function () {
+              accountDiv.remove()
+            })
+          })
+        }
+        accountDiv.click(function () {
+          chrome.extension.sendRequest({
+            cmd: 'applyLoginAccount',
+            uid: account.uid
+          }, function () {
+            window.location.reload()
+          })
+        })
+
+        accountGroupDiv.append(accountDiv)
+      }
+      let accountAddDiv = $('<div />').addClass('account-add')
+      accountAddDiv.text('+')
+      accountAddDiv.prop('title', '添加账户')
+      accountAddDiv.click(function () {
+        chrome.extension.sendRequest({
+          cmd: 'removeAllCookies'
+        }, function () {
+          window.location.reload()
+        })
+      })
+
+      accountGroupDiv.append(accountAddDiv)
+
+      modalBodyDiv.insertAfter(titleDive)
+      callback(data)
+    })
   })
 }
 
 let dialog
-chrome.extension.sendRequest({
-  cmd: 'readFile',
-  url: chrome.extension.getURL('tpls/help_panel.tpl'),
-}, function (result) {
-  let div = $('<div />')
-  loadHelpPanel(result, function(modifiedData){
+
+let reloadDialog = function () {
+  chrome.extension.sendRequest({
+    cmd: 'readFile',
+    url: chrome.extension.getURL('tpls/help_panel.tpl'),
+  }, function (tpl) {
+    let div = $('<div />')
+    loadHelpPanel(tpl, function (modifiedData) {
+      let prevDialog = div.find('#tapdAssistHelpPanel')
+      if (prevDialog) {
+        prevDialog.remove()
+      }
       div.html(modifiedData)
       dialog = div.find('#tapdAssistHelpPanel')
       dialog.hide()
@@ -123,9 +190,10 @@ chrome.extension.sendRequest({
         dialog.hide()
       })
       $('body').append(dialog)
+    })
   })
-
-})
+}
+setTimeout(reloadDialog, 1500)
 
 let menuLock = false
 let driverDownAt
@@ -318,15 +386,26 @@ tapdAssistOption.getShortcuts().then(function (data) {
       if (isTextarea || isInput || isEditable) {
         return
       }
+      if (!dialog) {
+        console.warn('dialog not created yet')
+        return
+      }
       dialog.toggle()
     },
-    [driver]: function () {
+    [driver]: function (e) {
       driverDownAt = Date.now()
+      if (e.repeat) {
+        return driver + '-down'
+      }
       clearDriverDownTimeout()
       driverDownTimeoutId = setTimeout(function () {
         clearDriverDownTimeout()
+        if (!dialog) {
+          console.warn('dialog not created yet')
+          return
+        }
         dialog.show()
-      }, 1000)
+      }, 750)
       leftTreeClose = $('body').hasClass('left-tree-close')
       $('body').removeClass('left-tree-close')
       return driver + '-down'
@@ -453,7 +532,11 @@ let ensureListenDocumentKeyEvents = function () {
         doc.addEventListener('keyup', function (e) {
           let key = e.key.toLowerCase()
           if (key === driver || (key === 'control' && driver === 'ctrl')) {
-            dialog.hide()
+            if (dialog) {
+              dialog.hide()
+            } else {
+              console.warn('dialog not created yet')
+            }
             clearDriverDownTimeout()
 
             const QUICK_CLICK_THRESHOLD = 400

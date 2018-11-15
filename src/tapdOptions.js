@@ -76,12 +76,12 @@ let tapdDefaultOptions = [
       {
         value: 'default',
         text: '原生',
-        description: '左侧编辑，右侧展示'
+        description: 'Markdown左侧编辑，右侧展示'
       },
       {
         value: 'editor_right',
         text: '右侧编辑',
-        description: '右侧编辑，左侧展示'
+        description: 'Markdown右侧编辑，左侧展示'
       }
     ]
   },

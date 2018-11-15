@@ -6,6 +6,7 @@
   "background": {
     "scripts":[
       "jquery.js",
+      "utils.js",
       "background.js"
     ]
   },
@@ -27,8 +28,11 @@
   "permissions": [
     "storage",
     "tabs",
+    "cookies",
     "http://*.tapd.cn/",
-    "https://*.tapd.cn/"
+    "https://*.tapd.cn/",
+    "http://tapd.cn/",
+    "https://tapd.cn/"
   ],
   "optional_permissions": [
     "http://*/",
