@@ -3,3 +3,4 @@
 *.zip
 .idea/
 node_modules/
+*~
