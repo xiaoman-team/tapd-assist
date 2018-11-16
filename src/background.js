@@ -136,7 +136,7 @@ function processCookieChangeQueue (callback) {
         url: cookieUrl,
         name: 't_cloud_login'
       }, function (nameCookie) {
-        let name = nameCookie && nameCookie.value
+        let name = nameCookie && unescape(nameCookie.value)
         
         for (let changeInfo of batch) {
           let account = accounts.find(a => a.uid === uid)
