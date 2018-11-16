@@ -136,7 +136,7 @@ function processCookieChangeQueue (callback) {
         url: cookieUrl,
         name: 't_cloud_login'
       }, function (nameCookie) {
-        let name = nameCookie ? unescape(nameCookie.value) : 'UNKNOWN'
+        let name = nameCookie && nameCookie.value
         
         for (let changeInfo of batch) {
           let account = accounts.find(a => a.uid === uid)
@@ -149,13 +149,15 @@ function processCookieChangeQueue (callback) {
             console.log('add login cookie', uid, changeInfo.cookie.name, changeInfo.cookie.value)
             account = {
               uid: uid,
-              name: name,
+              name: name || 'UNKNOWN',
               cookies: [changeInfo.cookie]
             }
             accounts.push(account)
             continue
           }
-          account.name = name
+          if (name) {
+            account.name = name
+          }
           let index = account.cookies.findIndex(c => c.name === changeInfo.cookie.name)
           if (index < 0) {
             if (changeInfo.removed) {
