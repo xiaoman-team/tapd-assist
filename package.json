@@ -1,6 +1,6 @@
 {
   "name": "tapd-assist",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Chrome extension for TAPD",
   "main": "index.js",
   "dependencies": {},
