@@ -91,7 +91,7 @@ let tapdDefaultOptions = [
     type: 'text_box',
     value: 'xiaoman-message://utils/chat?email={{user}}@xiaoman.cn&title=【{{title}}】&url={{url}}',
     description: '将每个用户昵称转换为一个链接',
-    detailLink: 'https://github.com/asinbow/tapd-assist/wiki/User-Link'
+    detailLink: 'https://github.com/xiaoman-team/tapd-assist/wiki/User-Link'
   },
   {
     title: '外部API',
@@ -99,7 +99,7 @@ let tapdDefaultOptions = [
     type: 'text_box',
     value: '',
     description: '在某些功能点会被调用的接口URL',
-    detailLink: 'https://github.com/asinbow/tapd-assist/wiki/External-API'
+    detailLink: 'https://github.com/xiaoman-team/tapd-assist/wiki/External-API'
   }
 ]
 
