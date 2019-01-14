@@ -37,7 +37,7 @@ let tapdAssistUtils = {
     if (m) {
       return m[1]
     }
-    let a = $('#workspace_list_ul .current a[workspace_id]')[0]
+    let a = $('.worktable-project .current a[workspace_id]')[0]
     if (a) {
       return a.getAttribute('workspace_id')
     }
